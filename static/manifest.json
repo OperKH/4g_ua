@@ -1,0 +1,21 @@
+{
+  "name": "4G Ukraine",
+  "short_name": "4G Ukraine",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#009688",
+  "description": "Список 4G та 3G базових станцій України",
+  "icons": [
+    {
+      "src": "/static/img/icons/4g-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/icons/4g-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
