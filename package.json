@@ -8,7 +8,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "prod": "nuxt start",
-    "start": "npm i && npm run crawler && npm run build && concurrently \"npm run cron\" \"npm run prod\"",
+    "start": "npm i && npm run crawler && npm run build && npm run prod",
     "generate": "nuxt generate",
     "crawler": "node --experimental-modules cron/crawlerRunner.mjs",
     "cron": "node --experimental-modules cron/index.mjs",
@@ -16,13 +16,13 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
+    "@nuxtjs/google-analytics": "^2.0.2",
     "axios": "^0.17.1",
     "node-cron": "^1.2.1",
     "nuxt": "^1.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
-    "concurrently": "^3.5.1",
     "eslint": "^4.15.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^2.9.0",

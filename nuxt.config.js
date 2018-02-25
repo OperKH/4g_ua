@@ -12,7 +12,7 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { name: 'keywords', content: '4G та 3G базові станціхї України' },
       { hid: 'description', name: 'description', content: '4G/3G БС України' },
-      { name: 'theme-color', content: '#0d47a1' },
+      { name: 'theme-color', content: '#80cbc4' },
     ],
     link: [
       { rel: 'icon', type: 'image/png', href: '/img/icons/4g-512x512.png' },
@@ -40,5 +40,17 @@ module.exports = {
         })
       }
     },
+    build: {
+      vendor: ['axios'],
+    },
+    // plugins: [{ src: '~/plugins/vue-good-table', ssr: false }],
+    modules: [
+      [
+        '@nuxtjs/google-analytics',
+        {
+          id: 'UA-114730066-1',
+        },
+      ],
+    ],
   },
 }

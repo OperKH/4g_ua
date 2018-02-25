@@ -4,7 +4,7 @@
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#009688",
+  "theme_color": "#80cbc4",
   "description": "Список 4G та 3G базових станцій України",
   "icons": [
     {
