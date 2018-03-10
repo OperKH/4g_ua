@@ -2,6 +2,14 @@ import path from 'path'
 import axios from 'axios'
 import fs from './libAsync/fs'
 
+let prevStartDate = new Date()
+const getProgress = () => {
+  const currentDate = new Date()
+  const result = currentDate - prevStartDate
+  prevStartDate = currentDate
+  return ` ${result}ms\n\n`
+}
+
 const getOperatorByFreq = freq => {
   if (/1922|1927|1932/i.test(freq)) {
     return 'life'
@@ -16,7 +24,7 @@ const getOperatorByFreq = freq => {
 }
 
 const getEquipmentBrandByModelName = modelName => {
-  if (/RBS 3206|RBS3418|RBS3518|RBS6102|RBS6201|RBS6301|RBS6302|RBS6000|RBS6601/i.test(modelName)) {
+  if (/RBS2116|RBS 3206|RBS3418|RBS3518|RBS6000|RBS6101|RBS6102|RBS6201|RBS6301|RBS6302|RBS6601/i.test(modelName)) {
     return 'Ericsson'
   } else if (/Nokia|Flexi Multiradio/i.test(modelName)) {
     return 'Nokia'
@@ -33,6 +41,8 @@ const getEquipmentBrandByModelName = modelName => {
 const getUCRFStatistic = async () => {
   let data
   try {
+    console.log(getProgress(), 'Requesting UCRF Statistic...')
+
     const res = await axios.get('http://www.ucrf.gov.ua/wp-admin/admin-ajax.php', {
       params: {
         action: 'get_wdtable',
@@ -44,30 +54,37 @@ const getUCRFStatistic = async () => {
     })
     data = res.data.aaData
   } catch (e) {
-    console.log('UCRF 3G basestations Request Error')
+    console.log(getProgress(), 'UCRF 3G Statistic Request Error')
     return null
   }
   if (!data || !data.length) {
-    console.warn('No 3G data from UCRF')
+    console.warn(getProgress(), 'No 3G Statistic from UCRF')
     return null
   }
   const updateDate = new Date()
   const mainData = {
     provinces3g: {
-      life: { total: 0, values: {} },
-      triMob: { total: 0, values: {} },
-      mts: { total: 0, values: {} },
-      ks: { total: 0, values: {} },
+      operators: {
+        life: { total: 0, values: {} },
+        triMob: { total: 0, values: {} },
+        mts: { total: 0, values: {} },
+        ks: { total: 0, values: {} },
+      },
       updateDate,
     },
     cities3g: {
-      life: { total: 0, values: {} },
-      triMob: { total: 0, values: {} },
-      mts: { total: 0, values: {} },
-      ks: { total: 0, values: {} },
+      operators: {
+        life: { total: 0, values: {} },
+        triMob: { total: 0, values: {} },
+        mts: { total: 0, values: {} },
+        ks: { total: 0, values: {} },
+      },
       updateDate,
     },
   }
+
+  console.log(getProgress(), 'Parsing UCRF Statistic...')
+
   data.forEach(item => {
     const date = new Date(
       item[1]
@@ -84,39 +101,56 @@ const getUCRFStatistic = async () => {
     const operatorNameKey = getOperatorByFreq(freq)
     const equipmentBrand = getEquipmentBrandByModelName(equipmentModelName)
 
-    if (typeof mainData.provinces3g[operatorNameKey].values[province] === 'undefined') {
-      mainData.provinces3g[operatorNameKey].values[province] = { date, quantity: 0, brand: {} }
+    if (typeof mainData.provinces3g.operators[operatorNameKey].values[province] === 'undefined') {
+      mainData.provinces3g.operators[operatorNameKey].values[province] = { province, date, quantity: 0, brands: {} }
     }
-    if (typeof mainData.cities3g[operatorNameKey].values[cityKey] === 'undefined') {
-      mainData.cities3g[operatorNameKey].values[cityKey] = {
+    if (typeof mainData.cities3g.operators[operatorNameKey].values[cityKey] === 'undefined') {
+      mainData.cities3g.operators[operatorNameKey].values[cityKey] = {
         city,
         province,
         date,
         quantity: 0,
-        brand: {},
+        brands: {},
       }
     }
-    mainData.provinces3g[operatorNameKey].total += 1
-    mainData.cities3g[operatorNameKey].total += 1
+    mainData.provinces3g.operators[operatorNameKey].total += 1
+    mainData.cities3g.operators[operatorNameKey].total += 1
 
-    mainData.provinces3g[operatorNameKey].values[province].date = new Date(
-      Math.max(mainData.provinces3g[operatorNameKey].values[province].date, date),
+    mainData.provinces3g.operators[operatorNameKey].values[province].date = new Date(
+      Math.max(mainData.provinces3g.operators[operatorNameKey].values[province].date, date),
     )
-    mainData.provinces3g[operatorNameKey].values[province].quantity += 1
-    mainData.provinces3g[operatorNameKey].values[province].brand[equipmentBrand] = mainData
-      .provinces3g[operatorNameKey].values[province].brand[equipmentBrand]
-      ? mainData.provinces3g[operatorNameKey].values[province].brand[equipmentBrand] + 1
+    mainData.provinces3g.operators[operatorNameKey].values[province].quantity += 1
+    mainData.provinces3g.operators[operatorNameKey].values[province].brands[equipmentBrand] = mainData.provinces3g
+      .operators[operatorNameKey].values[province].brands[equipmentBrand]
+      ? mainData.provinces3g.operators[operatorNameKey].values[province].brands[equipmentBrand] + 1
       : 1
 
-    mainData.cities3g[operatorNameKey].values[cityKey].date = new Date(
-      Math.max(mainData.cities3g[operatorNameKey].values[cityKey].date, date),
+    mainData.cities3g.operators[operatorNameKey].values[cityKey].date = new Date(
+      Math.max(mainData.cities3g.operators[operatorNameKey].values[cityKey].date, date),
     )
-    mainData.cities3g[operatorNameKey].values[cityKey].quantity += 1
-    mainData.cities3g[operatorNameKey].values[cityKey].brand[equipmentBrand] = mainData.cities3g[
+    mainData.cities3g.operators[operatorNameKey].values[cityKey].quantity += 1
+    mainData.cities3g.operators[operatorNameKey].values[cityKey].brands[equipmentBrand] = mainData.cities3g.operators[
       operatorNameKey
-    ].values[cityKey].brand[equipmentBrand]
-      ? mainData.cities3g[operatorNameKey].values[cityKey].brand[equipmentBrand] + 1
+    ].values[cityKey].brands[equipmentBrand]
+      ? mainData.cities3g.operators[operatorNameKey].values[cityKey].brands[equipmentBrand] + 1
       : 1
+  })
+
+  console.log(getProgress(), 'Transforming UCRF Statistic for frontend...')
+
+  Object.values(mainData).forEach(type => {
+    Object.values(type.operators).forEach(operator => {
+      // eslint-disable-next-line no-param-reassign
+      operator.values = Object.values(operator.values).map((value, valueIndex) => ({
+        ...value,
+        id: valueIndex + 1,
+        brands: Object.keys(value.brands).map((name, brandIndex) => ({
+          name,
+          id: brandIndex + 1,
+          quantity: value.brands[name],
+        })),
+      }))
+    })
   })
 
   return mainData
@@ -125,9 +159,10 @@ const getUCRFStatistic = async () => {
 export default async () => {
   const apiFolderPath = path.resolve('static', 'api')
   try {
+    console.log('\n\n Creating api folder...')
     await fs.mkdir(apiFolderPath)
   } catch (e) {
-    console.log('')
+    console.log(' api folder exists. OK.')
   }
 
   let statistic
@@ -138,17 +173,12 @@ export default async () => {
   }
 
   try {
-    await fs.writeFile(
-      path.resolve(apiFolderPath, '3g-cities.json'),
-      JSON.stringify(statistic.cities3g),
-    )
-    await fs.writeFile(
-      path.resolve(apiFolderPath, '3g-provinces.json'),
-      JSON.stringify(statistic.provinces3g),
-    )
+    console.log(getProgress(), 'Saving JSONs...')
+    await fs.writeFile(path.resolve(apiFolderPath, '3g-cities.json'), JSON.stringify(statistic.cities3g))
+    await fs.writeFile(path.resolve(apiFolderPath, '3g-provinces.json'), JSON.stringify(statistic.provinces3g))
   } catch (e) {
-    console.log('Enable to save file', e)
+    console.log(getProgress(), 'Unable to save file', e)
   }
 
-  console.log('Crawler finished')
+  console.log(getProgress(), 'Crawler finished!')
 }
