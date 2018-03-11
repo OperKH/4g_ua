@@ -22,13 +22,12 @@ const getOperatorByFreq = freq => {
   }
   return 'unknown'
 }
-
 const getEquipmentBrandByModelName = modelName => {
   if (/RBS2116|RBS 3206|RBS3418|RBS3518|RBS6000|RBS6101|RBS6102|RBS6201|RBS6301|RBS6302|RBS6601/i.test(modelName)) {
     return 'Ericsson'
   } else if (/Nokia|Flexi Multiradio/i.test(modelName)) {
     return 'Nokia'
-  } else if (/BTS 3803|DBS 3800|BTS3812|BTS 3900|DBS\s?3900/i.test(modelName)) {
+  } else if (/BTS 3803|BTS3812|BTS 3900|DBS 3800|DTS 3803C|DBS\s?3900/i.test(modelName)) {
     return 'Huawei'
   } else if (/ZXSDR BS8700/i.test(modelName)) {
     return 'ZTE'
