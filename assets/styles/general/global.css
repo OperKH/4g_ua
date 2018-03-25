@@ -1,0 +1,14 @@
+
+.page-header,
+.operator-header {
+  display: flex;
+  align-items: center;
+}
+
+.operator-name {
+  margin-right: 10px;
+}
+
+.table-holder {
+  margin-bottom: 15px;
+}

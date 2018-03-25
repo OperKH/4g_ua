@@ -1,7 +1,7 @@
 <template>
 <div>
   <nav>
-    <ul>
+    <ul class="nav-list">
       <li>
         <router-link to="/">3G БС за областями</router-link>
       </li>
@@ -20,3 +20,11 @@ export default {
 }
 </script>
 
+<style scoped>
+.nav-list {
+  display: flex;
+}
+.nav-list li + li {
+  margin-left: 15px;
+}
+</style>

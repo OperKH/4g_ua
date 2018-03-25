@@ -40,17 +40,15 @@ module.exports = {
         })
       }
     },
-    build: {
-      vendor: ['axios'],
-    },
-    // plugins: [{ src: '~/plugins/vue-good-table', ssr: false }],
-    modules: [
-      [
-        '@nuxtjs/google-analytics',
-        {
-          id: 'UA-114730066-1',
-        },
-      ],
-    ],
+    vendor: ['axios'],
   },
+  plugins: [{ src: '~/plugins/vue-good-table' }, { src: '~/plugins/filters' }],
+  modules: [
+    [
+      '@nuxtjs/google-analytics',
+      {
+        id: 'UA-114730066-1',
+      },
+    ],
+  ],
 }
