@@ -1,25 +1,27 @@
 <template>
-<section>
-  <h2>По областях</h2>
-  <div><b>Оновлено:</b> {{provinces.updateDate | formatDate}}</div>
-  <div class="content" v-if="provinces">
+<main>
+  <h2 hidden>По областях</h2>
+  <div class="tables-content" v-if="provinces">
     <section
       class="table-holder"
+      :class="'operator-' + operator"
       v-for="(operator, index) in opertatorsList3G"
       :key="index"
     >
       <header class="operator-header">
         <h3 class="operator-name">{{ operatorsConfig[operator].name }}</h3>
-        <div>
+        <div class="operator-info">
           БС: <b>{{ provinces.operators[operator].total }}</b>;
           Областей: <b>{{ provinces.operators[operator].values.length }}</b>
         </div>
       </header>
 
       <vue-good-table
+        class="table table-striped"
         :columns="columns"
         :rows="provinces.operators[operator].values"
         :defaultSortBy="defaultSortBy"
+        styleClass="vgt-table striped bordered">
       >
         <template slot="table-row" slot-scope="props">
           <template v-if="props.column.field == 'date'">
@@ -32,15 +34,16 @@
       </vue-good-table>
     </section>
   </div>
-</section>
+  <div class="updated" v-if="provinces"><b>Оновлено:</b> {{provinces.updateDate | formatDate}}</div>
+</main>
 </template>
 
 <script>
 import axios from 'axios'
-import { opertatorsList3G, operatorsConfig, sortAlhabeticallyFn, formatBrandsFn, formatDateFn } from '@/utils'
+import { opertatorsList3G, operatorsConfig, sortAlhabeticallyFn, formatDateFn } from '@/utils'
 
 export default {
-  name: 'provinces-3g',
+  name: 'Provinces3G',
   data() {
     return {
       opertatorsList3G,
@@ -69,10 +72,9 @@ export default {
         {
           label: 'Постачальник обладнання',
           field: 'brands',
-          sortable: false,
-          formatFn: formatBrandsFn,
           filterOptions: {
-            enabled: false,
+            enabled: true,
+            placeholder: 'Пошук...',
           },
         },
         {

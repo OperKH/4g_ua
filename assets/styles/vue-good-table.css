@@ -1,0 +1,58 @@
+.vgt-table th:not(.line-numbers) {
+  vertical-align: middle;
+}
+.vgt-right-align {
+  text-align: left;
+}
+.filter-th {
+  min-width: 52px;
+}
+
+.operator-ks .vgt-responsive {
+  border: 1px solid var(--color-ks);
+}
+.operator-mts .vgt-responsive {
+  border: 1px solid var(--color-mts);
+}
+.operator-life .vgt-responsive {
+  border: 1px solid var(--color-life);
+}
+.operator-triMob .vgt-responsive {
+  border: 1px solid var(--color-triMob);
+}
+
+.vgt-table.bordered {
+  border: 0;
+}
+.vgt-table.bordered td:first-child,
+.vgt-table.bordered th:first-child {
+  border-left: 0;
+}
+.vgt-table.bordered td:last-child,
+.vgt-table.bordered th:last-child {
+  border-right: 0;
+}
+.vgt-table.bordered tr:first-child th {
+  border-top: 0;
+}
+
+.vgt-table.bordered tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (max-width: 1023px) {
+  table.vgt-table td {
+    padding: 0.5rem;
+  }
+  .vgt-table th:not(.line-numbers) {
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+  }
+  .vgt-table th.filter-th {
+    padding: 0;
+  }
+  .vgt-input {
+    border: 0;
+    border-radius: 0;
+    padding: 0.5rem;
+  }
+}

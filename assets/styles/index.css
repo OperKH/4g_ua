@@ -1,2 +1,5 @@
+@import './general/root.css';
 @import './general/common.css';
 @import './general/global.css';
+
+@import './vue-good-table.css';

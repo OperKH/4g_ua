@@ -42,6 +42,7 @@ module.exports = {
     },
     vendor: ['axios'],
   },
+  css: ['vue-good-table/dist/vue-good-table.css', '@/assets/styles/index.css'],
   plugins: [{ src: '~/plugins/vue-good-table' }, { src: '~/plugins/filters' }],
   modules: [
     [

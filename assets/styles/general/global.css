@@ -1,14 +1,51 @@
-
-.page-header,
-.operator-header {
-  display: flex;
-  align-items: center;
-}
-
-.operator-name {
+.operator-name,
+.operator-info {
+  display: inline-block;
   margin-right: 10px;
 }
 
+.tables-content {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -0.5rem;
+  margin-left: -0.5rem;
+}
 .table-holder {
-  margin-bottom: 15px;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  margin-bottom: 1rem;
+  flex-basis: 50%;
+  max-width: 50%;
+}
+.operator-header {
+  color: #fff;
+  padding: 0.75rem;
+  background-color: #607d8b;
+}
+
+.operator-ks .operator-header {
+  background-color: var(--color-ks);
+}
+.operator-mts .operator-header {
+  background-color: var(--color-mts);
+}
+.operator-life .operator-header {
+  background-color: var(--color-life);
+}
+.operator-triMob .operator-header {
+  background-color: var(--color-triMob);
+}
+
+.updated {
+  text-align: right;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 1023px) {
+  .table-holder {
+    flex-basis: 100%;
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
+  }
 }

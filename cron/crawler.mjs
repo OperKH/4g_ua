@@ -140,14 +140,12 @@ const getUCRFStatistic = async () => {
   Object.values(mainData).forEach(type => {
     Object.values(type.operators).forEach(operator => {
       // eslint-disable-next-line no-param-reassign
-      operator.values = Object.values(operator.values).map((value, valueIndex) => ({
+      operator.values = Object.values(operator.values).map(value => ({
         ...value,
-        id: valueIndex + 1,
-        brands: Object.keys(value.brands).map((name, brandIndex) => ({
-          name,
-          id: brandIndex + 1,
-          quantity: value.brands[name],
-        })),
+        brands: Object.keys(value.brands)
+          .sort((a, b) => a.localeCompare(b))
+          .map(name => `${name}(${value.brands[name]})`)
+          .join(', '),
       }))
     })
   })
