@@ -5,7 +5,7 @@
     <OperatorTable
       type="city"
       v-if="cities"
-      v-for="operator in opertatorsList3G"
+      v-for="operator in opertatorsList4G"
       :key="operator"
       :operatorData="cities.operators[operator]"
       :operatorName="operatorsConfig[operator].name"
@@ -19,16 +19,16 @@
 <script>
 import axios from 'axios'
 import OperatorTable from '@/components/OperatorTable'
-import { opertatorsList3G, operatorsConfig } from '@/utils'
+import { opertatorsList4G, operatorsConfig } from '@/utils'
 
 export default {
-  name: 'Cities3G',
+  name: 'Cities4G',
   components: {
     OperatorTable,
   },
   data() {
     return {
-      opertatorsList3G,
+      opertatorsList4G,
       operatorsConfig,
       cities: null,
       error: null,
@@ -37,7 +37,7 @@ export default {
   async asyncData() {
     const host = process.server ? 'http://localhost:3000' : ''
     try {
-      const { data: cities } = await axios.get(`${host}/api/3g-cities.json`)
+      const { data: cities } = await axios.get(`${host}/api/4g-cities.json`)
       return { cities, error: null }
     } catch (error) {
       return { cities: null, error }

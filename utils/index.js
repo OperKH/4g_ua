@@ -1,5 +1,6 @@
 // Operators
 export const opertatorsList3G = ['ks', 'mts', 'life', 'triMob']
+export const opertatorsList4G = ['ks', 'mts', 'life']
 
 export const operatorsConfig = {
   ks: { name: 'Київстар' },

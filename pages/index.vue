@@ -13,13 +13,21 @@
 
 <script>
 export default {
-  name: 'index',
+  name: 'Index',
   data() {
     return {
       navigation: [
         {
-          name: '3G по областях',
+          name: '4G по областях',
           to: '/',
+        },
+        {
+          name: '4G по містах',
+          to: '/4g-cities',
+        },
+        {
+          name: '3G по областях',
+          to: '/3g-provinces',
         },
         {
           name: '3G по містах',

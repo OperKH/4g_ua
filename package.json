@@ -20,7 +20,7 @@
     "axios": "^0.18.0",
     "node-cron": "^1.2.1",
     "nuxt": "^1.0.0",
-    "vue-good-table": "^2.0.0-beta.5"
+    "vue-good-table": "^2.0.0-beta.9"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
