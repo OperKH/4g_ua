@@ -29,7 +29,7 @@ const getEquipmentBrandByModelName = modelName => {
     )
   ) {
     return 'Ericsson'
-  } else if (/Nokia|Flexi Multiradio/i.test(modelName)) {
+  } else if (/Nokia|Flexi Multiradio|BTS Optima|BTS Supreme/i.test(modelName)) {
     return 'Nokia'
   } else if (/BTS 3803|BTS3812|BTS 3900|DBS 3800|DTS 3803C|DBS\s?3900/i.test(modelName)) {
     return 'Huawei'
