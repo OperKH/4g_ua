@@ -11,11 +11,11 @@ const getProgress = () => {
 }
 
 const getOperatorByFreq = freq => {
-  if (/1967|1972|1977|-\s?2535/i.test(freq)) {
+  if (/-1750|1967|1972|1977|-\s?2535/i.test(freq)) {
     return 'ks'
-  } else if (/1952|1957|1962|-2520/i.test(freq)) {
+  } else if (/-1770|1952|1957|1962|-2520/i.test(freq)) {
     return 'mts'
-  } else if (/1922|1927|1932|-2545/i.test(freq)) {
+  } else if (/-1725|1922|1927|1932|-2545/i.test(freq)) {
     return 'life'
   } else if (/1937|1942|1947/i.test(freq)) {
     return 'triMob'
@@ -24,7 +24,7 @@ const getOperatorByFreq = freq => {
 }
 const getEquipmentBrandByModelName = modelName => {
   if (
-    /RBS2116|RBS 3206|RBS3418|RBS3518|Radio 4415|RBS6000|RBS6101|RBS6102|RBS6201|RBS6301|RBS6302|RBS6601/i.test(
+    /RBS2116|RBS 3206|RBS3418|RBS3518|Radio 4415|RBS6000|RBS6101|RBS\s?6102|RBS\s?6201|RBS6301|RBS6302|RBS6601/i.test(
       modelName,
     )
   ) {
@@ -60,7 +60,11 @@ const getUCRFStatistic = async techology => {
 }
 const getMergedUCRFStatistic = async () => {
   console.log(getProgress(), 'Requesting UCRF Statistic...')
-  const statistic = await Promise.all([getUCRFStatistic('UMTS'), getUCRFStatistic('LTE-2600')])
+  const statistic = await Promise.all([
+    getUCRFStatistic('UMTS'),
+    getUCRFStatistic('LTE-1800'),
+    getUCRFStatistic('LTE-2600'),
+  ])
   return [].concat(...statistic)
 }
 const processUCRFStatistic = async () => {
