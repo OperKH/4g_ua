@@ -22,6 +22,16 @@ const getOperatorByFreq = freq => {
   }
   return 'unknown'
 }
+const getFreqKey = freq => {
+  if (/-1725|-1770|-1750/i.test(freq)) {
+    return 1800
+  } else if (/-2520|-\s?2535|-2545/i.test(freq)) {
+    return 2600
+  } else if (/1922|1927|1932|1937|1942|1947|1952|1957|1962|1967|1972|1977/i.test(freq)) {
+    return 2100
+  }
+  return 'unknown'
+}
 const getEquipmentBrandByModelName = modelName => {
   if (
     /RBS2116|RBS 3206|RBS3418|RBS3518|Radio 4415|RBS6000|RBS6101|RBS\s?6102|RBS\s?6201|RBS6301|RBS6302|RBS6601/i.test(
@@ -96,6 +106,7 @@ const processUCRFStatistic = async () => {
     const operatorNameKey = getOperatorByFreq(freq)
     const equipmentBrand = getEquipmentBrandByModelName(equipmentModelName)
     const technologyKey = technology === 'UMTS' ? '3g' : '4g'
+    const freqKey = getFreqKey(freq)
 
     if (typeof mainData[`provinces${technologyKey}`] === 'undefined') {
       mainData[`provinces${technologyKey}`] = {
@@ -103,17 +114,27 @@ const processUCRFStatistic = async () => {
         updateDate,
       }
     }
-    if (typeof mainData[`provinces${technologyKey}`].operators[operatorNameKey] === 'undefined') {
-      mainData[`provinces${technologyKey}`].operators[operatorNameKey] = { total: 0, values: {} }
+
+    const provinceOperators = mainData[`provinces${technologyKey}`].operators
+
+    if (typeof provinceOperators[operatorNameKey] === 'undefined') {
+      provinceOperators[operatorNameKey] = { total: 0, values: {} }
     }
-    if (typeof mainData[`provinces${technologyKey}`].operators[operatorNameKey].values[province] === 'undefined') {
-      mainData[`provinces${technologyKey}`].operators[operatorNameKey].values[province] = {
+    if (typeof provinceOperators[operatorNameKey].values[province] === 'undefined') {
+      provinceOperators[operatorNameKey].values[province] = {
         province,
         date,
-        quantity: 0,
-        brands: {},
+      }
+      if (technologyKey === '3g') {
+        provinceOperators[operatorNameKey].values[province].qty = { all: 0 }
+        provinceOperators[operatorNameKey].values[province].brands = { all: {} }
+      } else {
+        provinceOperators[operatorNameKey].values[province].qty = { all: 0, 1800: 0, 2600: 0 }
+        provinceOperators[operatorNameKey].values[province].brands = { all: {}, 1800: {}, 2600: {} }
       }
     }
+
+    const currentProvince = provinceOperators[operatorNameKey].values[province]
 
     if (typeof mainData[`cities${technologyKey}`] === 'undefined') {
       mainData[`cities${technologyKey}`] = {
@@ -121,41 +142,56 @@ const processUCRFStatistic = async () => {
         updateDate,
       }
     }
-    if (typeof mainData[`cities${technologyKey}`].operators[operatorNameKey] === 'undefined') {
-      mainData[`cities${technologyKey}`].operators[operatorNameKey] = { total: 0, values: {} }
+
+    const cityOperators = mainData[`cities${technologyKey}`].operators
+
+    if (typeof cityOperators[operatorNameKey] === 'undefined') {
+      cityOperators[operatorNameKey] = { total: 0, values: {} }
     }
-    if (typeof mainData[`cities${technologyKey}`].operators[operatorNameKey].values[cityKey] === 'undefined') {
-      mainData[`cities${technologyKey}`].operators[operatorNameKey].values[cityKey] = {
+    if (typeof cityOperators[operatorNameKey].values[cityKey] === 'undefined') {
+      cityOperators[operatorNameKey].values[cityKey] = {
         city,
         province,
         date,
-        quantity: 0,
         brands: {},
+      }
+      if (technologyKey === '3g') {
+        cityOperators[operatorNameKey].values[cityKey].qty = { all: 0 }
+        cityOperators[operatorNameKey].values[cityKey].brands = { all: {} }
+      } else {
+        cityOperators[operatorNameKey].values[cityKey].qty = { all: 0, 1800: 0, 2600: 0 }
+        cityOperators[operatorNameKey].values[cityKey].brands = { all: {}, 1800: {}, 2600: {} }
       }
     }
 
-    mainData[`provinces${technologyKey}`].operators[operatorNameKey].total += 1
-    mainData[`cities${technologyKey}`].operators[operatorNameKey].total += 1
+    const currentCity = cityOperators[operatorNameKey].values[cityKey]
 
-    mainData[`provinces${technologyKey}`].operators[operatorNameKey].values[province].date = new Date(
-      Math.max(mainData[`provinces${technologyKey}`].operators[operatorNameKey].values[province].date, date),
-    )
-    mainData[`provinces${technologyKey}`].operators[operatorNameKey].values[province].quantity += 1
-    mainData[`provinces${technologyKey}`].operators[operatorNameKey].values[province].brands[equipmentBrand] = mainData[
-      `provinces${technologyKey}`
-    ].operators[operatorNameKey].values[province].brands[equipmentBrand]
-      ? mainData[`provinces${technologyKey}`].operators[operatorNameKey].values[province].brands[equipmentBrand] + 1
-      : 1
+    provinceOperators[operatorNameKey].total += 1
+    cityOperators[operatorNameKey].total += 1
 
-    mainData[`cities${technologyKey}`].operators[operatorNameKey].values[cityKey].date = new Date(
-      Math.max(mainData[`cities${technologyKey}`].operators[operatorNameKey].values[cityKey].date, date),
-    )
-    mainData[`cities${technologyKey}`].operators[operatorNameKey].values[cityKey].quantity += 1
-    mainData[`cities${technologyKey}`].operators[operatorNameKey].values[cityKey].brands[equipmentBrand] = mainData[
-      `cities${technologyKey}`
-    ].operators[operatorNameKey].values[cityKey].brands[equipmentBrand]
-      ? mainData[`cities${technologyKey}`].operators[operatorNameKey].values[cityKey].brands[equipmentBrand] + 1
+    currentProvince.date = new Date(Math.max(currentProvince.date, date))
+    currentProvince.qty.all += 1
+    currentProvince.brands.all[equipmentBrand] = currentProvince.brands.all[equipmentBrand]
+      ? currentProvince.brands.all[equipmentBrand] + 1
       : 1
+    if (technologyKey === '4g') {
+      currentProvince.qty[freqKey] += 1
+      currentProvince.brands[freqKey][equipmentBrand] = currentProvince.brands[freqKey][equipmentBrand]
+        ? currentProvince.brands[freqKey][equipmentBrand] + 1
+        : 1
+    }
+
+    currentCity.date = new Date(Math.max(currentCity.date, date))
+    currentCity.qty.all += 1
+    currentCity.brands.all[equipmentBrand] = currentCity.brands.all[equipmentBrand]
+      ? currentCity.brands.all[equipmentBrand] + 1
+      : 1
+    if (technologyKey === '4g') {
+      currentCity.qty[freqKey] += 1
+      currentCity.brands[freqKey][equipmentBrand] = currentCity.brands[freqKey][equipmentBrand]
+        ? currentCity.brands[freqKey][equipmentBrand] + 1
+        : 1
+    }
   })
 
   console.log(getProgress(), 'Transforming UCRF Statistic for frontend...')
@@ -165,10 +201,16 @@ const processUCRFStatistic = async () => {
       const values = Object.values(operator.values)
         .map(value => ({
           ...value,
-          brands: Object.keys(value.brands)
-            .sort((a, b) => a.localeCompare(b))
-            .map(name => `${name}(${value.brands[name]})`)
-            .join(', '),
+          brands: Object.keys(value.brands).reduce(
+            (acc, freq) => ({
+              ...acc,
+              [freq]: Object.keys(value.brands[freq])
+                .sort((a, b) => a.localeCompare(b))
+                .map(name => `${name}(${value.brands[freq][name]})`)
+                .join(', '),
+            }),
+            {},
+          ),
         }))
         .sort((a, b) => a.province.localeCompare(b.province))
       if ('city' in values[0]) {
