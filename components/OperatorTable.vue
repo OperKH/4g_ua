@@ -18,7 +18,17 @@
     styleClass="vgt-table striped bordered">
   >
     <template slot="table-row" slot-scope="props">
-      <template v-if="props.column.field == 'date'">
+      <template v-if="props.column.field == 'qty'">
+        <div v-if="1800 in props.row.qty"><b>1800</b><span>: {{props.row.qty[1800]}}</span></div>
+        <div v-if="2600 in props.row.qty"><b>2600</b><span>: {{props.row.qty[2600]}}</span></div>
+        <div><b>Разом</b><span>: {{props.row.qty.all}}</span></div>
+      </template>
+      <template v-else-if="props.column.field == 'brands'">
+        <div v-if="1800 in props.row.brands"><b>1800</b><span>: {{props.row.brands[1800] ? props.row.brands[1800] : '-'}}</span></div>
+        <div v-if="2600 in props.row.brands"><b>2600</b><span>: {{props.row.brands[2600] ? props.row.brands[2600] : '-'}}</span></div>
+        <div><b>Разом</b><span>: {{props.row.brands.all}}</span></div>
+      </template>
+      <template v-else-if="props.column.field == 'date'">
         <time :datetime="props.row.date">{{ props.formattedRow.date }}</time>
       </template>
       <template v-else>
@@ -30,7 +40,7 @@
 </template>
 
 <script>
-import { sortAlhabeticallyFn, formatDateFn } from '@/utils'
+import { sortAlphabeticallyFn, filterByAllFieldsFn, formatDateFn } from '@/utils'
 
 export default {
   name: 'OperatorTable',
@@ -41,7 +51,7 @@ export default {
         {
           label: 'Місто',
           field: 'city',
-          sortFn: sortAlhabeticallyFn,
+          sortFn: sortAlphabeticallyFn,
           filterOptions: {
             enabled: true,
             placeholder: 'Пошук...',
@@ -50,7 +60,7 @@ export default {
         {
           label: 'Область',
           field: 'province',
-          sortFn: sortAlhabeticallyFn,
+          sortFn: sortAlphabeticallyFn,
           filterOptions: {
             enabled: true,
             placeholder: 'Пошук...',
@@ -58,19 +68,22 @@ export default {
         },
         {
           label: 'К-ть БС',
-          field: 'quantity',
-          type: 'number',
+          field: 'qty',
+          sortFn: (a, b) => a.all - b.all,
           filterOptions: {
             enabled: true,
             placeholder: 'Пошук...',
+            filterFn: filterByAllFieldsFn,
           },
         },
         {
           label: 'Постачальник обладнання',
           field: 'brands',
+          sortFn: (a, b) => sortAlphabeticallyFn(a.all, b.all),
           filterOptions: {
             enabled: true,
             placeholder: 'Пошук...',
+            filterFn: filterByAllFieldsFn,
           },
         },
         {

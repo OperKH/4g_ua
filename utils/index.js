@@ -1,3 +1,6 @@
+// Helpers
+export const escapeRegExp = str => str.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&')
+
 // Operators
 export const opertatorsList3G = ['ks', 'mts', 'life', 'triMob']
 export const opertatorsList4G = ['ks', 'mts', 'life']
@@ -10,7 +13,7 @@ export const operatorsConfig = {
 }
 
 // Sort
-export const sortAlhabeticallyFn = (a, b) => a.localeCompare(b)
+export const sortAlphabeticallyFn = (a, b) => a.localeCompare(b)
 
 // Format
 export const formatDateFn = dateISO =>
@@ -21,3 +24,8 @@ export const formatDateFn = dateISO =>
     .join('.')
 
 // Filter
+export const filterByAllFieldsFn = (data, filterString) =>
+  !!Object.values(data).find(s => {
+    const regExp = new RegExp(escapeRegExp(filterString), 'i')
+    return regExp.test(s)
+  })
