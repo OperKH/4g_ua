@@ -108,6 +108,10 @@ const processUCRFStatistic = async () => {
     const technologyKey = technology === 'UMTS' ? '3g' : '4g'
     const freqKey = getFreqKey(freq)
 
+    // Skip Item if UCRF returns corrupted province
+    // 'Київ' - the shortest province
+    if (province.length < 4) return
+
     if (typeof mainData[`provinces${technologyKey}`] === 'undefined') {
       mainData[`provinces${technologyKey}`] = {
         operators: {},
@@ -224,8 +228,24 @@ const processUCRFStatistic = async () => {
   return mainData
 }
 
+const apiFolderPath = path.resolve('static', 'api')
+
+const saveJson = async (jsonFileName, data) => {
+  const jsonPath = path.resolve(apiFolderPath, jsonFileName)
+  if (data) {
+    await fs.writeFile(jsonPath, JSON.stringify(data))
+  } else {
+    try {
+      await fs.access(jsonPath)
+      console.log(` No Data. File "${jsonFileName}" exists, no rewrite.`)
+    } catch (e) {
+      await fs.writeFile(jsonPath, null)
+      console.log(` No Data. File "${jsonFileName}" doesn't exists, created empty.`)
+    }
+  }
+}
+
 export default async () => {
-  const apiFolderPath = path.resolve('static', 'api')
   try {
     console.log('\n\n Creating api folder...')
     await fs.mkdir(apiFolderPath)
@@ -242,10 +262,10 @@ export default async () => {
 
   try {
     console.log(getProgress(), 'Saving JSONs...')
-    await fs.writeFile(path.resolve(apiFolderPath, '3g-cities.json'), JSON.stringify(statistic.cities3g || null))
-    await fs.writeFile(path.resolve(apiFolderPath, '3g-provinces.json'), JSON.stringify(statistic.provinces3g || null))
-    await fs.writeFile(path.resolve(apiFolderPath, '4g-cities.json'), JSON.stringify(statistic.cities4g || null))
-    await fs.writeFile(path.resolve(apiFolderPath, '4g-provinces.json'), JSON.stringify(statistic.provinces4g || null))
+    await saveJson('3g-cities.json', statistic.cities3g)
+    await saveJson('3g-provinces.json', statistic.provinces3g)
+    await saveJson('4g-cities.json', statistic.cities4g)
+    await saveJson('4g-provinces.json', statistic.provinces4g)
   } catch (e) {
     console.log(getProgress(), 'Unable to save file', e)
   }

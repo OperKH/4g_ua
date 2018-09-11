@@ -5,4 +5,5 @@ export default {
   readFile: util.promisify(fs.readFile),
   writeFile: util.promisify(fs.writeFile),
   mkdir: util.promisify(fs.mkdir),
+  access: util.promisify(fs.access),
 }
