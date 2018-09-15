@@ -16,12 +16,13 @@ export const operatorsConfig = {
 export const sortAlphabeticallyFn = (a, b) => a.localeCompare(b)
 
 // Format
-export const formatDateFn = dateISO =>
-  dateISO
-    .split('T')[0]
-    .split('-')
-    .reverse()
-    .join('.')
+export const formatDateFn = dateISO => {
+  const d = new Date(dateISO)
+  const year = d.getFullYear()
+  const mon = d.getMonth() + 1
+  const day = d.getDate()
+  return `${day < 10 ? '0' + day : day}.${mon < 10 ? '0' + mon : mon}.${year}`
+}
 
 // Filter
 export const filterByAllFieldsFn = (data, filterString) =>
