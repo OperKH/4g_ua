@@ -18,23 +18,18 @@
     styleClass="vgt-table striped bordered">
   >
     <template slot="table-row" slot-scope="props">
-      <template v-if="props.column.field == 'qty'">
-        <template v-if="2600 in props.row.qty">
-        <div v-if="1800 in props.row.qty"><b>1800</b><span>: {{props.row.qty[1800]}}</span></div>
-        <div v-if="2600 in props.row.qty"><b>2600</b><span>: {{props.row.qty[2600]}}</span></div>
-        <div><b>Разом</b><span>: {{props.row.qty.all}}</span></div>
-        </template>
-        <template v-else>{{props.row.qty.all}}</template>
-      </template>
-      <template v-else-if="props.column.field == 'brands'">
+      <template v-if="props.column.field === 'brands'">
         <template v-if="2600 in props.row.brands">
-        <div v-if="1800 in props.row.brands"><b>1800</b><span>: {{props.row.brands[1800] ? props.row.brands[1800] : '-'}}</span></div>
-        <div v-if="2600 in props.row.brands"><b>2600</b><span>: {{props.row.brands[2600] ? props.row.brands[2600] : '-'}}</span></div>
-        <div><b>Разом</b><span>: {{props.row.brands.all}}</span></div>
+          <div><b>1800<span v-if="props.row.brands[1800].indexOf(',') !== -1">({{props.row.qty[1800]}})</span></b>: {{props.row.brands[1800] || '-'}}</div>
+          <div><b>2600<span v-if="props.row.brands[2600].indexOf(',') !== -1">({{props.row.qty[2600]}})</span></b>: {{props.row.brands[2600] || '-'}}</div>
+          <div><b>Разом<span v-if="props.row.brands.all.indexOf(',') !== -1">({{props.row.qty.all}})</span></b>: {{props.row.brands.all}}</div>
         </template>
-        <template v-else>{{props.row.brands.all}}</template>
+        <template v-else>
+          <div>{{props.row.brands.all}}</div>
+          <div><b>Разом</b>: {{props.row.qty.all}}</div>
+        </template>
       </template>
-      <template v-else-if="props.column.field == 'date'">
+      <template v-else-if="props.column.field === 'date'">
         <time :datetime="props.row.date">{{ props.formattedRow.date }}</time>
       </template>
       <template v-else>
@@ -46,7 +41,7 @@
 </template>
 
 <script>
-import { sortAlphabeticallyFn, filterByAllFieldsFn, formatDateFn } from '@/utils'
+import { parseQtyFromBrands, sortAlphabeticallyFn, filterByAllFieldsFn, formatDateFn } from '@/utils'
 
 export default {
   name: 'OperatorTable',
@@ -74,18 +69,8 @@ export default {
         },
         {
           label: 'К-ть БС',
-          field: 'qty',
-          sortFn: (a, b) => a.all - b.all,
-          filterOptions: {
-            enabled: true,
-            placeholder: 'Пошук...',
-            filterFn: filterByAllFieldsFn,
-          },
-        },
-        {
-          label: 'Постачальник обладнання',
           field: 'brands',
-          sortFn: (a, b) => sortAlphabeticallyFn(a.all, b.all),
+          sortFn: (a, b) => parseQtyFromBrands(a.all) - parseQtyFromBrands(b.all),
           filterOptions: {
             enabled: true,
             placeholder: 'Пошук...',

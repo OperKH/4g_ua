@@ -1,5 +1,8 @@
+const regDigit = /\d+/g
+
 // Helpers
 export const escapeRegExp = str => str.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&')
+export const parseQtyFromBrands = brand => (brand.match(regDigit) || []).reduce((acc, str) => acc + parseInt(str), 0)
 
 // Operators
 export const opertatorsList3G = ['ks', 'mts', 'life', 'triMob']
@@ -28,5 +31,5 @@ export const formatDateFn = dateISO => {
 export const filterByAllFieldsFn = (data, filterString) =>
   !!Object.values(data).find(s => {
     const regExp = new RegExp(escapeRegExp(filterString), 'i')
-    return regExp.test(s)
+    return regExp.test(s) || regExp.test(parseQtyFromBrands(s) || null)
   })
