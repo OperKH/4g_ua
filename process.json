@@ -3,7 +3,7 @@
     "name": "4G UA Nuxt Server",
     "script": "npm",
     "args" : "start",
-    "watch": ["layouts", "pages", "components", "plugins", "nuxt.config.js", "package.json"]
+    "watch": ["layouts", "pages", "components", "plugins", "utils", "nuxt.config.js", "package.json"]
   }, {
     "name": "4G UA Cron",
     "script": "npm",
