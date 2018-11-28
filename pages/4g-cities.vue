@@ -1,20 +1,20 @@
 <template>
   <main>
-    <h2 hidden>По областях</h2>
-    <div class="tables-content" v-if="provinces">
+    <h2 hidden>По містах</h2>
+    <div class="tables-content" v-if="cities">
       <OperatorTable
-        type="province"
-        v-if="provinces"
+        type="city"
+        v-if="cities"
         v-for="operator in opertatorsList4G"
         :key="operator"
-        :operatorData="provinces.operators[operator]"
+        :operatorData="cities.operators[operator]"
         :operatorName="operatorsConfig[operator].name"
         :class="'operator-' + operator"
       />
     </div>
-    <div class="updated" v-if="provinces">
+    <div class="updated" v-if="cities">
       <b>Оновлено:</b>
-      {{provinces.updateDate | formatDate}}
+      {{cities.updateDate | formatDate}}
     </div>
   </main>
 </template>
@@ -24,7 +24,7 @@ import OperatorTable from '@/components/OperatorTable'
 import { opertatorsList4G, operatorsConfig, requestJsonAsync } from '@/utils'
 
 export default {
-  name: 'Provinces4G',
+  name: 'Cities4G',
   components: {
     OperatorTable,
   },
@@ -32,15 +32,15 @@ export default {
     return {
       opertatorsList4G,
       operatorsConfig,
-      provinces: null,
+      cities: null,
       error: null,
     }
   },
   async asyncData() {
     try {
-      return { provinces: await requestJsonAsync('4g-provinces.json'), error: null }
+      return { cities: await requestJsonAsync('4g-cities.json'), error: null }
     } catch (error) {
-      return { provinces: null, error }
+      return { cities: null, error }
     }
   },
 }

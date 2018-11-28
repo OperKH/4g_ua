@@ -1,7 +1,7 @@
 module.exports = {
   /*
-  ** Headers of the page
-  */
+   ** Headers of the page
+   */
   head: {
     htmlAttrs: {
       lang: 'uk',
@@ -20,16 +20,16 @@ module.exports = {
     ],
   },
   /*
-  ** Customize the progress bar color
-  */
+   ** Customize the progress bar color
+   */
   loading: { color: '#009688' },
   /*
-  ** Build configuration
-  */
+   ** Build configuration
+   */
   build: {
     /*
-    ** Run ESLint on save
-    */
+     ** Run ESLint on save
+     */
     extend(config, { isDev, isClient }) {
       if (isDev && isClient) {
         config.module.rules.push({
@@ -39,8 +39,11 @@ module.exports = {
           exclude: /(node_modules)/,
         })
       }
+      config.node = {
+        ...config.node,
+        fs: 'empty',
+      }
     },
-    vendor: ['axios'],
   },
   css: ['vue-good-table/dist/vue-good-table.css', '@/assets/styles/index.css'],
   plugins: [{ src: '~/plugins/vue-good-table' }, { src: '~/plugins/filters' }],

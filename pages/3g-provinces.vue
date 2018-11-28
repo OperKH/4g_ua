@@ -5,7 +5,7 @@
       <OperatorTable
         type="province"
         v-if="provinces"
-        v-for="operator in opertatorsList4G"
+        v-for="operator in opertatorsList3G"
         :key="operator"
         :operatorData="provinces.operators[operator]"
         :operatorName="operatorsConfig[operator].name"
@@ -21,16 +21,16 @@
 
 <script>
 import OperatorTable from '@/components/OperatorTable'
-import { opertatorsList4G, operatorsConfig, requestJsonAsync } from '@/utils'
+import { opertatorsList3G, operatorsConfig, requestJsonAsync } from '@/utils'
 
 export default {
-  name: 'Provinces4G',
+  name: 'Provinces3G',
   components: {
     OperatorTable,
   },
   data() {
     return {
-      opertatorsList4G,
+      opertatorsList3G,
       operatorsConfig,
       provinces: null,
       error: null,
@@ -38,7 +38,7 @@ export default {
   },
   async asyncData() {
     try {
-      return { provinces: await requestJsonAsync('4g-provinces.json'), error: null }
+      return { provinces: await requestJsonAsync('3g-provinces.json'), error: null }
     } catch (error) {
       return { provinces: null, error }
     }

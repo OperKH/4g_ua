@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const regDigit = /\d+/g
 
 // Helpers
@@ -33,3 +35,26 @@ export const filterByAllFieldsFn = (data, filterString) =>
     const regExp = new RegExp(escapeRegExp(filterString), 'i')
     return regExp.test(s) || regExp.test(parseQtyFromBrands(s) || null)
   })
+
+export const readFileAsync = (...args) => {
+  return new Promise((resolve, reject) => {
+    const fs = require('fs')
+    fs.readFile(...args, (err, data) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(data)
+      }
+    })
+  })
+}
+
+export const requestJsonAsync = async file => {
+  if (process.server) {
+    const data = await readFileAsync(`static/api/${file}`, 'utf8')
+    return JSON.parse(data)
+  } else {
+    const { data } = await axios.get(`/api/${file}`)
+    return data
+  }
+}

@@ -13,11 +13,14 @@ const getProgress = () => {
 const getOperatorByFreq = freq => {
   if (/-1750|1967|1972|1977|-\s?2535/i.test(freq)) {
     return 'ks'
-  } else if (/-1770|1952|1957|1962|-2520/i.test(freq)) {
+  }
+  if (/-1770|1952|1957|1962|-2520/i.test(freq)) {
     return 'mts'
-  } else if (/-1725|1922|1927|1932|-2545/i.test(freq)) {
+  }
+  if (/-1725|1922|1927|1932|-2545/i.test(freq)) {
     return 'life'
-  } else if (/1937|1942|1947/i.test(freq)) {
+  }
+  if (/1937|1942|1947/i.test(freq)) {
     return 'triMob'
   }
   return 'unknown'
@@ -25,9 +28,11 @@ const getOperatorByFreq = freq => {
 const getFreqKey = freq => {
   if (/-1725|-1770|-1750/i.test(freq)) {
     return 1800
-  } else if (/-2520|-\s?2535|-2545/i.test(freq)) {
+  }
+  if (/-2520|-\s?2535|-2545/i.test(freq)) {
     return 2600
-  } else if (/1922|1927|1932|1937|1942|1947|1952|1957|1962|1967|1972|1977/i.test(freq)) {
+  }
+  if (/1922|1927|1932|1937|1942|1947|1952|1957|1962|1967|1972|1977/i.test(freq)) {
     return 2100
   }
   return 'unknown'
@@ -39,13 +44,17 @@ const getEquipmentBrandByModelName = modelName => {
     )
   ) {
     return 'Ericsson'
-  } else if (/Nokia|Flexi Multiradio|BTS Optima|BTS Supreme/i.test(modelName)) {
+  }
+  if (/Nokia|Flexi Multiradio|BTS Optima|BTS Supreme/i.test(modelName)) {
     return 'Nokia'
-  } else if (/BTS 3803|BTS3812|BTS 3900|DBS 3800|DTS 3803C|DBS\s?3900/i.test(modelName)) {
+  }
+  if (/BTS 3803|BTS3812|BTS 3900|DBS 3800|DTS 3803C|DBS\s?3900/i.test(modelName)) {
     return 'Huawei'
-  } else if (/ZXSDR BS8700/i.test(modelName)) {
+  }
+  if (/ZXSDR BS8700/i.test(modelName)) {
     return 'ZTE'
-  } else if (/MobileAccess GX/i.test(modelName)) {
+  }
+  if (/MobileAccess GX/i.test(modelName)) {
     return 'Corning'
   }
   return modelName
@@ -233,7 +242,7 @@ const apiFolderPath = path.resolve('static', 'api')
 const saveJson = async (jsonFileName, data) => {
   const jsonPath = path.resolve(apiFolderPath, jsonFileName)
   if (data) {
-    await fs.writeFile(jsonPath, JSON.stringify(data))
+    await fs.writeFile(jsonPath, JSON.stringify(data), 'utf8')
   } else {
     try {
       await fs.access(jsonPath)
