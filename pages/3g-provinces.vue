@@ -4,7 +4,6 @@
     <div class="tables-content" v-if="provinces">
       <OperatorTable
         type="province"
-        v-if="provinces"
         v-for="operator in opertatorsList3G"
         :key="operator"
         :operatorData="provinces.operators[operator]"

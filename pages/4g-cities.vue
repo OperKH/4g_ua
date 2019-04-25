@@ -4,7 +4,6 @@
     <div class="tables-content" v-if="cities">
       <OperatorTable
         type="city"
-        v-if="cities"
         v-for="operator in opertatorsList4G"
         :key="operator"
         :operatorData="cities.operators[operator]"
