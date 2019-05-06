@@ -45,7 +45,20 @@ import { parseQtyFromBrands, sortAlphabeticallyFn, filterByAllFieldsFn, formatDa
 
 export default {
   name: 'OperatorTable',
-  props: ['operatorName', 'operatorData', 'type'],
+  props: {
+    operatorName: {
+      type: String,
+      required: true
+    },
+    operatorData: {
+      type: Object,
+      required: true
+    },
+    type: {
+      type: String,
+      required: true
+    },
+  },
   data() {
     return {
       columnsAll: [
