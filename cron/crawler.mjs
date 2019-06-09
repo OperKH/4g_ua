@@ -269,6 +269,8 @@ export default async () => {
     console.log(e)
   }
 
+  if (!statistic) return
+
   try {
     console.log(getProgress(), 'Saving JSONs...')
     await saveJson('3g-cities.json', statistic.cities3g)
