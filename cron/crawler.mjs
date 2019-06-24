@@ -1,6 +1,31 @@
 import path from 'path'
+import https from 'https'
 import axios from 'axios'
+import jsdom from 'jsdom'
+import jquery from 'jquery'
 import fs from './libAsync/fs'
+import {
+  getOperatorByFreq,
+  getFreqKey,
+  getEquipmentBrandByModelName,
+  provinceCorrector,
+  cityCorrector,
+} from './helpers'
+
+const { JSDOM } = jsdom
+const { window } = new JSDOM()
+const $ = jquery(window)
+
+const ucrfPartialsKey = 'listRegistriesCentralized::items'
+const ucrfAPI = axios.create({
+  baseURL: 'https://www.ucrf.gov.ua/ua/services/centralized-registries',
+  headers: {
+    'X-OCTOBER-REQUEST-HANDLER': 'listRegistriesCentralized::onFilterRegistries',
+    'X-OCTOBER-REQUEST-PARTIALS': ucrfPartialsKey,
+    'X-Requested-With': 'XMLHttpRequest',
+  },
+  httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+})
 
 let prevStartDate = new Date()
 const getProgress = () => {
@@ -10,71 +35,36 @@ const getProgress = () => {
   return ` ${result}ms\n\n`
 }
 
-const getOperatorByFreq = freq => {
-  if (/-1750|1967|1972|1977|-\s?2535/i.test(freq)) {
-    return 'ks'
-  }
-  if (/-1770|1952|1957|1962|-2520/i.test(freq)) {
-    return 'mts'
-  }
-  if (/-1725|1922|1927|1932|-2545/i.test(freq)) {
-    return 'life'
-  }
-  if (/1937|1942|1947/i.test(freq)) {
-    return 'triMob'
-  }
-  return 'unknown'
-}
-const getFreqKey = freq => {
-  if (/-1725|-1770|-1750/i.test(freq)) {
-    return 1800
-  }
-  if (/-2520|-\s?2535|-2545/i.test(freq)) {
-    return 2600
-  }
-  if (/1922|1927|1932|1937|1942|1947|1952|1957|1962|1967|1972|1977/i.test(freq)) {
-    return 2100
-  }
-  return 'unknown'
-}
-const getEquipmentBrandByModelName = modelName => {
-  if (
-    /RBS2116|RBS 3206|RBS3418|RBS3518|Radio 4415|RBS6000|RBS6101|RBS\s?6102|RBS\s?6201|RBS6301|RBS6302|RBS6601/i.test(
-      modelName,
-    )
-  ) {
-    return 'Ericsson'
-  }
-  if (/Nokia|Flexi Multiradio|BTS Optima|BTS Supreme/i.test(modelName)) {
-    return 'Nokia'
-  }
-  if (/BTS 3803|BTS3812|BTS 3900|DBS 3800|DTS 3803C|DBS\s?3900/i.test(modelName)) {
-    return 'Huawei'
-  }
-  if (/ZXSDR BS8700/i.test(modelName)) {
-    return 'ZTE'
-  }
-  if (/MobileAccess GX/i.test(modelName)) {
-    return 'Corning'
-  }
-  return modelName
-}
-
-const getUCRFStatistic = async techology => {
+const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}) => {
   try {
-    const res = await axios.get('http://www.ucrf.gov.ua/wp-admin/admin-ajax.php', {
+    const res = await ucrfAPI.post('', null, {
       params: {
-        action: 'get_wdtable',
-        table_id: 1,
-        sEcho: 1,
-        sSearch_9: techology,
-        bSearchable_9: true,
+        technology,
+        page,
+        per_page: 200,
       },
     })
-    return res.data.aaData
+    const $html = $(res.data[ucrfPartialsKey])
+    const statistic = Array.from(
+      $html
+        .siblings('table')
+        .find('tbody')
+        .find('tr'),
+    ).map(tr => Array.from($(tr).find('td')).map(td => td.innerHTML))
+    const lastPageText = $html
+      .siblings('.row')
+      .find('.pagination')
+      .find('li')
+      .last()
+      .prev()
+      .text()
+    const lastPage = parseInt(lastPageText, 10)
+    const result = { ...prevStatistic, ...statistic.reduce((acc, s) => ({ ...acc, [s[0]]: s }), {}) }
+    console.log(`     ${technology} page: ${page}/${lastPage}`)
+    return page === lastPage ? Object.values(result) : getUCRFStatistic(technology, page + 1, result)
   } catch (e) {
-    console.log(`UCRF ${techology} Statistic Request Error.`)
-    return []
+    console.log(`UCRF ${technology} Statistic Request Error.`)
+    return prevStatistic
   }
 }
 const getMergedUCRFStatistic = async () => {
@@ -84,7 +74,7 @@ const getMergedUCRFStatistic = async () => {
     getUCRFStatistic('LTE-1800'),
     getUCRFStatistic('LTE-2600'),
   ])
-  return [].concat(...statistic)
+  return statistic.flat()
 }
 const processUCRFStatistic = async () => {
   const data = await getMergedUCRFStatistic()
@@ -99,14 +89,9 @@ const processUCRFStatistic = async () => {
   console.log(getProgress(), 'Parsing UCRF Statistic...')
 
   data.forEach(item => {
-    const date = new Date(
-      item[1]
-        .split('/')
-        .reverse()
-        .join('/'),
-    )
-    const province = item[3]
-    const city = item[4]
+    const date = new Date(item[1])
+    const province = provinceCorrector(item[3])
+    const city = cityCorrector(item[4])
     const equipmentModelName = item[5]
     const freq = item[7]
     const technology = item[9]
