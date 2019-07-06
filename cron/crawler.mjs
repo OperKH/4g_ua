@@ -91,7 +91,7 @@ const processUCRFStatistic = async () => {
   data.forEach(item => {
     const date = new Date(item[1])
     const province = provinceCorrector(item[3])
-    const city = cityCorrector(item[4])
+    const city = cityCorrector(item[4], item[3])
     const equipmentModelName = item[5]
     const freq = item[7]
     const technology = item[9]
