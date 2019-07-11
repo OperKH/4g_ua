@@ -1,8 +1,6 @@
+// eslint-disable-next-line
+import { Worker } from 'worker_threads'
 import path from 'path'
-import https from 'https'
-import axios from 'axios'
-import jsdom from 'jsdom'
-import jquery from 'jquery'
 import fs from './libAsync/fs'
 import {
   getOperatorByFreq,
@@ -12,21 +10,6 @@ import {
   cityCorrector,
 } from './helpers'
 
-const { JSDOM } = jsdom
-const { window } = new JSDOM()
-const $ = jquery(window)
-
-const ucrfPartialsKey = 'listRegistriesCentralized::items'
-const ucrfAPI = axios.create({
-  baseURL: 'https://www.ucrf.gov.ua/ua/services/centralized-registries',
-  headers: {
-    'X-OCTOBER-REQUEST-HANDLER': 'listRegistriesCentralized::onFilterRegistries',
-    'X-OCTOBER-REQUEST-PARTIALS': ucrfPartialsKey,
-    'X-Requested-With': 'XMLHttpRequest',
-  },
-  httpsAgent: new https.Agent({ rejectUnauthorized: false }),
-})
-
 let prevStartDate = new Date()
 const getProgress = () => {
   const currentDate = new Date()
@@ -35,38 +18,16 @@ const getProgress = () => {
   return ` ${result}ms\n\n`
 }
 
-const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}) => {
-  try {
-    const res = await ucrfAPI.post('', null, {
-      params: {
-        technology,
-        page,
-        per_page: 200,
-      },
+const getUCRFStatistic = workerData =>
+  new Promise((resolve, reject) => {
+    const worker = new Worker('./cron/getUCRFStatisticWorker.mjs', { workerData })
+    worker.on('message', resolve)
+    worker.on('error', reject)
+    worker.on('exit', code => {
+      if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`))
     })
-    const $html = $(res.data[ucrfPartialsKey])
-    const statistic = Array.from(
-      $html
-        .siblings('table')
-        .find('tbody')
-        .find('tr'),
-    ).map(tr => Array.from($(tr).find('td')).map(td => td.innerHTML))
-    const lastPageText = $html
-      .siblings('.row')
-      .find('.pagination')
-      .find('li')
-      .last()
-      .prev()
-      .text()
-    const lastPage = parseInt(lastPageText, 10)
-    const result = { ...prevStatistic, ...statistic.reduce((acc, s) => ({ ...acc, [s[0]]: s }), {}) }
-    console.log(`     ${technology} page: ${page}/${lastPage}`)
-    return page === lastPage ? Object.values(result) : getUCRFStatistic(technology, page + 1, result)
-  } catch (e) {
-    console.log(`UCRF ${technology} Statistic Request Error.`)
-    return prevStatistic
-  }
-}
+  })
+
 const getMergedUCRFStatistic = async () => {
   console.log(getProgress(), 'Requesting UCRF Statistic...')
   const statistic = await Promise.all([
