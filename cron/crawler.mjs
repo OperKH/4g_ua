@@ -1,14 +1,15 @@
-// eslint-disable-next-line
+// eslint-disable-next-line import/extensions, import/no-unresolved
 import { Worker } from 'worker_threads'
 import path from 'path'
-import fs from './libAsync/fs'
+import { promises as fs } from 'fs'
 import {
   getOperatorByFreq,
   getFreqKey,
   getEquipmentBrandByModelName,
   provinceCorrector,
   cityCorrector,
-} from './helpers'
+// eslint-disable-next-line import/extensions
+} from './helpers.mjs'
 
 let prevStartDate = new Date()
 const getProgress = () => {

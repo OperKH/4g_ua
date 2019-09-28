@@ -1,4 +1,4 @@
-// eslint-disable-next-line
+// eslint-disable-next-line import/extensions, import/no-unresolved
 import { workerData, parentPort } from 'worker_threads'
 import https from 'https'
 import axios from 'axios'
