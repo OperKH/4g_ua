@@ -8,7 +8,7 @@ import {
   getEquipmentBrandByModelName,
   provinceCorrector,
   cityCorrector,
-// eslint-disable-next-line import/extensions
+  // eslint-disable-next-line import/extensions
 } from './helpers.mjs'
 
 let prevStartDate = new Date()
@@ -39,6 +39,7 @@ const getMergedUCRFStatistic = async () => {
   return statistic.flat()
 }
 const processUCRFStatistic = async () => {
+  const dateToday = new Date()
   const data = await getMergedUCRFStatistic()
 
   if (!data || !data.length) {
@@ -52,6 +53,7 @@ const processUCRFStatistic = async () => {
 
   data.forEach(item => {
     const date = new Date(item[1])
+    const dateEnd = new Date(item[2])
     const province = provinceCorrector(item[3])
     const city = cityCorrector(item[4], item[3])
     const equipmentModelName = item[5]
@@ -63,6 +65,9 @@ const processUCRFStatistic = async () => {
     const equipmentBrand = getEquipmentBrandByModelName(equipmentModelName)
     const technologyKey = technology === 'UMTS' ? '3g' : '4g'
     const freqKey = getFreqKey(freq)
+
+    // Skip Item if it outdated
+    if (dateEnd < dateToday) return
 
     // Skip Item if UCRF returns corrupted province
     // 'Київ' - the shortest province
