@@ -4,6 +4,7 @@ import path from 'path'
 import { promises as fs } from 'fs'
 import {
   getOperatorByFreq,
+  getTechnologyKey,
   getFreqKey,
   getEquipmentBrandByModelName,
   provinceCorrector,
@@ -63,7 +64,7 @@ const processUCRFStatistic = async () => {
     const cityKey = `${city}_${province}`
     const operatorNameKey = getOperatorByFreq(freq)
     const equipmentBrand = getEquipmentBrandByModelName(equipmentModelName)
-    const technologyKey = technology === 'UMTS' ? '3g' : '4g'
+    const technologyKey = getTechnologyKey(technology)
     const freqKey = getFreqKey(freq)
 
     // Skip Item if it outdated

@@ -27,6 +27,18 @@ export const getFreqKey = freq => {
   return 'unknown'
 }
 
+export const getTechnologyKey = technology => {
+  switch (technology) {
+    case 'UMTS':
+      return '3g'
+    case 'LTE-1800':
+    case 'LTE-2600':
+      return '4g'
+    default:
+      return 'unknown'
+  }
+}
+
 export const getEquipmentBrandByModelName = modelName => {
   if (
     /RBS2116|RBS 3206|RBS3418|RBS3518|Radio 4415|RBS6000|RBS6101|RBS\s?6102|RBS\s?6201|RBS6301|RBS6302|RBS6601/i.test(
