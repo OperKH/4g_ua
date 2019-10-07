@@ -91,12 +91,12 @@ const processUCRFStatistic = async () => {
         province,
         date,
       }
-      if (technologyKey === '3g') {
-        provinceOperators[operatorNameKey].values[province].qty = { all: 0 }
-        provinceOperators[operatorNameKey].values[province].brands = { all: {} }
-      } else {
+      if (technologyKey === '4g') {
         provinceOperators[operatorNameKey].values[province].qty = { all: 0, 1800: 0, 2600: 0 }
         provinceOperators[operatorNameKey].values[province].brands = { all: {}, 1800: {}, 2600: {} }
+      } else {
+        provinceOperators[operatorNameKey].values[province].qty = { all: 0 }
+        provinceOperators[operatorNameKey].values[province].brands = { all: {} }
       }
     }
 
@@ -121,12 +121,12 @@ const processUCRFStatistic = async () => {
         date,
         brands: {},
       }
-      if (technologyKey === '3g') {
-        cityOperators[operatorNameKey].values[cityKey].qty = { all: 0 }
-        cityOperators[operatorNameKey].values[cityKey].brands = { all: {} }
-      } else {
+      if (technologyKey === '4g') {
         cityOperators[operatorNameKey].values[cityKey].qty = { all: 0, 1800: 0, 2600: 0 }
         cityOperators[operatorNameKey].values[cityKey].brands = { all: {}, 1800: {}, 2600: {} }
+      } else {
+        cityOperators[operatorNameKey].values[cityKey].qty = { all: 0 }
+        cityOperators[operatorNameKey].values[cityKey].brands = { all: {} }
       }
     }
 
