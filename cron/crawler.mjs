@@ -39,6 +39,8 @@ const getUCRFStatistic = workerData =>
 const getMergedUCRFStatistic = async () => {
   console.log(getProgress(), 'Requesting UCRF Statistic...')
   const statistic = await Promise.all([
+    getUCRFStatistic('GSM-900'),
+    getUCRFStatistic('GSM-1800'),
     getUCRFStatistic('UMTS'),
     getUCRFStatistic('LTE-1800'),
     getUCRFStatistic('LTE-2600'),

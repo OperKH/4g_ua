@@ -29,6 +29,9 @@ export const getFreqKey = freq => {
 
 export const getTechnologyKey = technology => {
   switch (technology) {
+    case 'GSM-900':
+    case 'GSM-1800':
+      return '2g'
     case 'UMTS':
       return '3g'
     case 'LTE-1800':
