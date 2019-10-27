@@ -74,14 +74,14 @@ const processUCRFStatistic = async () => {
     // 'Київ' - the shortest province
     if (province.length < 4) return
 
-    if (typeof mainData[`provinces${technologyKey}`] === 'undefined') {
-      mainData[`provinces${technologyKey}`] = {
+    if (typeof mainData[`${technologyKey}-provinces`] === 'undefined') {
+      mainData[`${technologyKey}-provinces`] = {
         operators: {},
         updateDate,
       }
     }
 
-    const provinceOperators = mainData[`provinces${technologyKey}`].operators
+    const provinceOperators = mainData[`${technologyKey}-provinces`].operators
 
     if (typeof provinceOperators[operatorNameKey] === 'undefined') {
       provinceOperators[operatorNameKey] = { total: 0, values: {} }
@@ -102,14 +102,14 @@ const processUCRFStatistic = async () => {
 
     const currentProvince = provinceOperators[operatorNameKey].values[province]
 
-    if (typeof mainData[`cities${technologyKey}`] === 'undefined') {
-      mainData[`cities${technologyKey}`] = {
+    if (typeof mainData[`${technologyKey}-cities`] === 'undefined') {
+      mainData[`${technologyKey}-cities`] = {
         operators: {},
         updateDate,
       }
     }
 
-    const cityOperators = mainData[`cities${technologyKey}`].operators
+    const cityOperators = mainData[`${technologyKey}-cities`].operators
 
     if (typeof cityOperators[operatorNameKey] === 'undefined') {
       cityOperators[operatorNameKey] = { total: 0, values: {} }
@@ -191,6 +191,93 @@ const processUCRFStatistic = async () => {
 }
 
 const apiFolderPath = path.resolve('static', 'api')
+const oldApiFolderPath = path.resolve(apiFolderPath, 'old')
+
+const createFolders = async () => {
+  try {
+    console.log('\n\n Creating api folder...')
+    await fs.mkdir(apiFolderPath)
+  } catch (e) {
+    console.log(' api folder exists. OK.')
+  }
+  try {
+    console.log(' Creating api/old folder...')
+    await fs.mkdir(oldApiFolderPath)
+  } catch (e) {
+    console.log(' api/old folder exists. OK.')
+  }
+}
+
+const movePrevApiFiles = async () => {
+  console.log(getProgress(), 'Moving API files...')
+  const files = await fs.readdir(apiFolderPath, 'utf-8')
+  const jsons = files.filter(fileName => /\.json$/.test(fileName))
+  await Promise.all(
+    jsons.map(fileName => {
+      const currentPath = path.resolve(apiFolderPath, fileName)
+      const newPath = path.resolve(oldApiFolderPath, fileName)
+      return fs.rename(currentPath, newPath)
+    }),
+  )
+}
+
+const getOldStatistic = async () => {
+  const files = await fs.readdir(oldApiFolderPath, 'utf-8')
+  const jsons = files.filter(fileName => /\.json$/.test(fileName))
+  const statistics = await Promise.all(
+    jsons.map(async fileName => {
+      const filePath = path.resolve(oldApiFolderPath, fileName)
+      const json = await fs.readFile(filePath, 'utf-8')
+      return JSON.parse(json)
+    }),
+  )
+
+  const oldStatistic = jsons.reduce((acc, fileName, index) => {
+    const key = fileName.slice(0, -5)
+    acc[key] = statistics[index]
+    return acc
+  }, {})
+  return oldStatistic
+}
+
+const addDiff = async newStatistic => {
+  const diffQtyKey = 'diffQty'
+  try {
+    console.log(getProgress(), 'Reading old Statistic...')
+    const oldStatistic = await getOldStatistic()
+    console.log(getProgress(), 'Calculating diff...')
+    Object.keys(newStatistic).forEach(key => {
+      if (!oldStatistic[key] || !oldStatistic[key].operators) return
+      const newOperators = newStatistic[key].operators
+      const oldOperators = oldStatistic[key].operators
+      Object.keys(newOperators).forEach(operatorKey => {
+        const newOperator = newOperators[operatorKey]
+        const oldOperator = oldOperators[operatorKey]
+        newOperator.diffTotal = newOperator.total - oldOperator.total
+        newOperator.values.forEach(newValue => {
+          const isCity = 'city' in newValue
+          const oldValue = oldOperator.values.find(value =>
+            isCity
+              ? value.city === newValue.city && value.province === newValue.province
+              : value.province === newValue.province,
+          )
+          Object.keys(newValue.qty).forEach(qtyKey => {
+            const newQty = newValue.qty[qtyKey]
+            const oldQty = (oldValue && oldValue.qty && oldValue.qty[qtyKey]) || 0
+            if (!(diffQtyKey in newValue)) {
+              // eslint-disable-next-line no-param-reassign
+              newValue[diffQtyKey] = {}
+            }
+            // eslint-disable-next-line no-param-reassign
+            newValue[diffQtyKey][qtyKey] = newQty - oldQty
+          })
+        })
+      })
+    })
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 const saveJson = async (jsonFileName, data) => {
   const jsonPath = path.resolve(apiFolderPath, jsonFileName)
@@ -207,31 +294,25 @@ const saveJson = async (jsonFileName, data) => {
   }
 }
 
-export default async () => {
-  try {
-    console.log('\n\n Creating api folder...')
-    await fs.mkdir(apiFolderPath)
-  } catch (e) {
-    console.log(' api folder exists. OK.')
-  }
-
-  let statistic
-  try {
-    statistic = await processUCRFStatistic()
-  } catch (e) {
-    console.log(e)
-  }
-
-  if (!statistic) return
-
+const saveJsonFiles = async statistic => {
   try {
     console.log(getProgress(), 'Saving JSONs...')
-    await saveJson('3g-cities.json', statistic.cities3g)
-    await saveJson('3g-provinces.json', statistic.provinces3g)
-    await saveJson('4g-cities.json', statistic.cities4g)
-    await saveJson('4g-provinces.json', statistic.provinces4g)
+    await Promise.all(Object.keys(statistic).map(key => saveJson(`${key}.json`, statistic[key])))
   } catch (e) {
     console.log(getProgress(), 'Unable to save file', e)
+  }
+}
+
+export default async () => {
+  try {
+    await createFolders()
+    const statistic = await processUCRFStatistic()
+    if (!statistic) return
+    await movePrevApiFiles()
+    await addDiff(statistic)
+    await saveJsonFiles(statistic)
+  } catch (e) {
+    console.log(e)
   }
 
   console.log(getProgress(), 'Crawler finished!')
