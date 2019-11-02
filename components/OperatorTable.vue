@@ -5,7 +5,7 @@
   <header class="operator-header">
     <h3 class="operator-name">{{ operatorName }}</h3>
     <div class="operator-info">
-      БС: <b>{{ operatorData.total }}</b>;
+      БС: <b>{{ operatorData.total }}</b><template v-if="operatorData.diffTotal"> (<template v-if="operatorData.diffTotal > 0">+</template>{{ operatorData.diffTotal }})</template>;
       {{ type === 'city' ? 'Міст' : 'Областей' }} : <b>{{ operatorData.values.length }}</b>
     </div>
   </header>
@@ -17,23 +17,35 @@
     :sort-options="sortOptions"
     styleClass="vgt-table striped bordered">
   >
-    <template slot="table-row" slot-scope="props">
-      <template v-if="props.column.field === 'brands'">
-        <template v-if="2600 in props.row.brands">
-          <div><b>1800<span v-if="props.row.brands[1800].indexOf(',') !== -1">({{props.row.qty[1800]}})</span></b>: {{props.row.brands[1800] || '-'}}</div>
-          <div><b>2600<span v-if="props.row.brands[2600].indexOf(',') !== -1">({{props.row.qty[2600]}})</span></b>: {{props.row.brands[2600] || '-'}}</div>
-          <div><b>Разом<span v-if="props.row.brands.all.indexOf(',') !== -1">({{props.row.qty.all}})</span></b>: {{props.row.brands.all}}</div>
+    <template #table-row="{ column, row, formattedRow }">
+      <template v-if="column.field === 'brands'">
+        <template v-if="2600 in row.brands">
+          <div>
+            <b>1800</b><template v-if="row.brands[1800].indexOf(',') !== -1">({{row.qty[1800]}})</template>: {{row.brands[1800] || '&ndash;'}}
+            <DiffQty :diffQty="row.diffQty" freq="1800" v-if="row.diffQty"/>
+          </div>
+          <div>
+            <b>2600</b><template v-if="row.brands[2600].indexOf(',') !== -1">({{row.qty[2600]}})</template>: {{row.brands[2600] || '&ndash;'}}
+            <DiffQty :diffQty="row.diffQty" freq="2600" v-if="row.diffQty"/>
+          </div>
+          <div>
+            <b>Разом</b><template v-if="row.brands.all.indexOf(',') !== -1">({{row.qty.all}})</template>: {{row.brands.all}}
+            <DiffQty :diffQty="row.diffQty" freq="all" v-if="row.diffQty"/>
+          </div>
         </template>
         <template v-else>
-          <div>{{props.row.brands.all}}</div>
-          <div><b>Разом</b>: {{props.row.qty.all}}</div>
+          <div>{{row.brands.all}}</div>
+          <div>
+            <b>Разом</b>: {{row.qty.all}}
+            <DiffQty :diffQty="row.diffQty" freq="all" v-if="row.diffQty"/>
+          </div>
         </template>
       </template>
-      <template v-else-if="props.column.field === 'date'">
-        <time :datetime="props.row.date">{{ props.formattedRow.date }}</time>
+      <template v-else-if="column.field === 'date'">
+        <time :datetime="row.date">{{ formattedRow.date }}</time>
       </template>
       <template v-else>
-        {{props.formattedRow[props.column.field]}}
+        {{ formattedRow[column.field] }}
       </template>
     </template>
   </vue-good-table>
@@ -41,10 +53,14 @@
 </template>
 
 <script>
+import DiffQty from './DiffQty'
 import { parseQtyFromBrands, sortAlphabeticallyFn, filterByAllFieldsFn, formatDateFn } from '@/utils'
 
 export default {
   name: 'OperatorTable',
+  components: {
+    DiffQty,
+  },
   props: {
     operatorName: {
       type: String,
