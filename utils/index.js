@@ -7,15 +7,15 @@ export const escapeRegExp = str => str.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&')
 export const parseQtyFromBrands = brand => (brand.match(regDigit) || []).reduce((acc, str) => acc + parseInt(str), 0)
 
 // Operators
-export const opertatorsList3G = ['ks', 'mts', 'life', 'triMob']
-export const opertatorsList4G = ['ks', 'mts', 'life']
-
 export const operatorsConfig = {
   ks: { name: 'Київстар' },
   mts: { name: 'Vodafone' },
   life: { name: 'lifecell' },
   triMob: { name: '3Mob' },
 }
+export const operatorsList3G = ['ks', 'mts', 'life', 'triMob']
+export const operatorsList4G = ['ks', 'mts', 'life']
+export const operatorsList = Object.keys(operatorsConfig)
 
 // Sort
 export const sortAlphabeticallyFn = (a, b) => a.localeCompare(b)

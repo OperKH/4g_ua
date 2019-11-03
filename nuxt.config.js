@@ -10,7 +10,7 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { name: 'keywords', content: '4G та 3G базові станціхї України' },
+      { name: 'keywords', content: '4G та 3G базові станції України' },
       { hid: 'description', name: 'description', content: '4G/3G БС України' },
       { name: 'theme-color', content: '#80cbc4' },
     ],
@@ -46,7 +46,12 @@ module.exports = {
     },
   },
   css: ['vue-good-table/dist/vue-good-table.css', '@/assets/styles/index.css'],
-  plugins: [{ src: '~/plugins/vue-good-table' }, { src: '~/plugins/filters' }],
+  plugins: [
+    { src: '~/plugins/vuex-persistedstate.js', ssr: false },
+    { src: '~/plugins/vue-good-table' },
+    { src: '~/plugins/vue-slide-up-down' },
+    { src: '~/plugins/filters' },
+  ],
   modules: [
     [
       '@nuxtjs/google-analytics',

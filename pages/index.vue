@@ -4,10 +4,11 @@
     <div class="tables-content" v-if="provinces">
       <OperatorTable
         type="province"
-        v-for="operator in opertatorsList4G"
+        v-for="operator in operatorsList4G"
         :key="operator"
         :operatorData="provinces.operators[operator]"
         :operatorName="operatorsConfig[operator].name"
+        :operatorKey="operator"
         :class="'operator-' + operator"
       />
     </div>
@@ -20,7 +21,7 @@
 
 <script>
 import OperatorTable from '@/components/OperatorTable'
-import { opertatorsList4G, operatorsConfig, requestJsonAsync } from '@/utils'
+import { operatorsList4G, operatorsConfig, requestJsonAsync } from '@/utils'
 
 export default {
   name: 'Provinces4G',
@@ -29,7 +30,7 @@ export default {
   },
   data() {
     return {
-      opertatorsList4G,
+      operatorsList4G,
       operatorsConfig,
       provinces: null,
       error: null,
