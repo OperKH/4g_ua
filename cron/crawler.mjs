@@ -253,7 +253,9 @@ const addDiff = async newStatistic => {
       Object.keys(newOperators).forEach(operatorKey => {
         const newOperator = newOperators[operatorKey]
         const oldOperator = oldOperators[operatorKey]
-        newOperator.diffTotal = newOperator.total - oldOperator.total
+        const diffTotal = newOperator.total - oldOperator.total
+        newOperator.diffTotal = diffTotal || oldOperator.diffTotal
+        newOperator.diffDate = diffTotal ? oldStatistic[key].updateDate : oldOperator.diffDate || oldStatistic[key].updateDate
         newOperator.values.forEach(newValue => {
           const isCity = 'city' in newValue
           const oldValue = oldOperator.values.find(value =>
@@ -261,6 +263,12 @@ const addDiff = async newStatistic => {
               ? value.city === newValue.city && value.province === newValue.province
               : value.province === newValue.province,
           )
+          // Check if operator has no changes then copy old changes
+          if (diffTotal === 0) {
+            // eslint-disable-next-line no-param-reassign
+            newValue[diffQtyKey] = oldValue[diffQtyKey]
+            return
+          }
           Object.keys(newValue.qty).forEach(qtyKey => {
             const newQty = newValue.qty[qtyKey]
             const oldQty = (oldValue && oldValue.qty && oldValue.qty[qtyKey]) || 0
