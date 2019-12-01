@@ -41,7 +41,7 @@ export const getTechnologyKey = technology => {
 
 export const getEquipmentBrandByModelName = modelName => {
   if (
-    /RBS2116|RBS 3206|RBS3418|RBS3518|Radio 4415|RBS6000|RBS6101|RBS\s?6102|RBS\s?6201|RBS6301|RBS6302|RBS6601/i.test(
+    /RBS2116|RADIO 2219|RBS 3206|RBS3418|RBS3518|Radio 4415|RBS6000|RBS6101|RBS\s?6102|RBS\s?6201|RBS6301|RBS6302|RBS6501|RBS6601/i.test(
       modelName,
     )
   ) {
@@ -50,7 +50,7 @@ export const getEquipmentBrandByModelName = modelName => {
   if (/Nokia|Flexi Multiradio|BTS Optima|BTS Supreme/i.test(modelName)) {
     return 'Nokia'
   }
-  if (/BTS 3803|BTS3812|BTS 3900|DBS 3800|DTS 3803C|DBS\s?3900/i.test(modelName)) {
+  if (/BTS 3803|BTS3812|BTS\s?3900|DBS 3800|DTS 3803C|DBS\s?3900/i.test(modelName)) {
     return 'Huawei'
   }
   if (/ZXSDR BS8700/i.test(modelName)) {
