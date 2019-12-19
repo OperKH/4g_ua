@@ -44,6 +44,13 @@ module.exports = {
         fs: 'empty',
       }
     },
+    loaders: {
+      vue: {
+        compilerOptions: {
+          whitespace: 'condense',
+        },
+      },
+    },
   },
   css: ['vue-good-table/dist/vue-good-table.css', '@/assets/styles/index.css'],
   plugins: [
