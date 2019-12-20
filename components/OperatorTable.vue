@@ -16,7 +16,9 @@
       :columns="columns"
       :rows="operatorData.values"
       :sort-options="sortOptions"
-      styleClass="vgt-table striped bordered">
+      styleClass="vgt-table striped bordered"
+      @on-column-filter="onColumnFilter"
+      ref="table"
     >
       <template #table-row="{ column, row, formattedRow }">
         <template v-if="column.field === 'brands'">
@@ -67,20 +69,20 @@ export default {
   props: {
     operatorName: {
       type: String,
-      required: true
+      required: true,
     },
     operatorData: {
       type: Object,
-      required: true
+      required: true,
     },
     type: {
       type: String,
-      required: true
+      required: true,
     },
     operatorKey: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -126,7 +128,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isTableOpen']),
+    ...mapGetters(['isTableOpen', 'columnFilters']),
     isActive() {
       return this.isTableOpen[this.operatorKey]
     },
@@ -141,11 +143,29 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['toggleTableOpen']),
+    ...mapActions(['toggleTableOpen', 'columnFiltersChange']),
     headerClickHandler() {
       this.toggleTableOpen(this.operatorKey)
-    }
-  }
+    },
+    onColumnFilter({ columnFilters }) {
+      this.columnFiltersChange(columnFilters)
+    },
+    applyFilters(columnFilters) {
+      this.$refs.table.$refs['table-header-primary'].$refs['filter-row'].columnFilters = { ...columnFilters }
+      this.$refs.table.filterRows({ ...columnFilters }, false)
+    },
+  },
+  mounted() {
+    this.applyFilters(this.columnFilters)
+  },
+  watch: {
+    columnFilters: {
+      handler(columnFilters) {
+        this.applyFilters(columnFilters)
+      },
+      deep: true,
+    },
+  },
 }
 </script>
 
