@@ -16,7 +16,7 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/png', href: '/img/icons/4g-512x512.png' },
-      { rel: 'manifest', href: 'manifest.json' },
+      { rel: 'manifest', href: '/manifest.json' },
     ],
   },
   /*
