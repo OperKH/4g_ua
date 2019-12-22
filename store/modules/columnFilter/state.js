@@ -1,6 +1,6 @@
-export default {
+export default () => ({
   city: '',
   province: '',
   brands: '',
   date: '',
-}
+})

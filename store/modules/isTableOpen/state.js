@@ -4,6 +4,6 @@ const state = operatorsList.reduce((acc, operatorName) => {
   acc[operatorName] = true
   return acc
 }, {})
-export default {
+export default () => ({
   ...state
-}
+})
