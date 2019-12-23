@@ -1,7 +1,10 @@
 // eslint-disable-next-line import/extensions, import/no-unresolved
 import { Worker } from 'worker_threads'
+import { exec } from 'child_process'
 import path from 'path'
+import { promisify } from 'util'
 import { promises as fs } from 'fs'
+
 import {
   getOperatorByFreq,
   getTechnologyKey,
@@ -11,6 +14,8 @@ import {
   cityCorrector,
   // eslint-disable-next-line import/extensions
 } from './helpers.mjs'
+
+const execAsync = promisify(exec)
 
 let prevStartDate = new Date()
 const getProgress = () => {
@@ -311,6 +316,21 @@ const saveJsonFiles = async statistic => {
   }
 }
 
+const generatePages = () => {
+  console.log(getProgress(), 'Generating pages...')
+  return execAsync('npm run generate')
+}
+
+const publishPages = async () => {
+  console.log(getProgress(), 'Publish pages folder...')
+  try {
+    await fs.rename('public', `public-backup-${Date.now()}`)
+  } catch (e) {
+    console.log(e)
+  }
+  await fs.rename('dist', 'public')
+}
+
 export default async () => {
   try {
     await createFolders()
@@ -319,6 +339,8 @@ export default async () => {
     await movePrevApiFiles()
     await addDiff(statistic)
     await saveJsonFiles(statistic)
+    await generatePages()
+    await publishPages()
   } catch (e) {
     console.log(e)
   }
