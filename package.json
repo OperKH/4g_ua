@@ -8,7 +8,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "prod": "nuxt start",
-    "start": "npm ci && npm run build && npm run prod",
+    "start": "nuxt",
     "generate": "nuxt generate",
     "crawler": "node --experimental-modules cron/crawlerRunner.mjs",
     "cron": "node --experimental-modules cron/index.mjs",
