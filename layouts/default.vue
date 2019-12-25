@@ -7,11 +7,14 @@
         </li>
       </ul>
     </nav>
-    <nuxt/>
+    <nuxt />
+    <notifications />
   </div>
 </template>
 
 <script>
+import firebase from '@/plugins/firebase'
+
 export default {
   name: 'Index',
   data() {
@@ -35,6 +38,23 @@ export default {
         },
       ],
     }
+  },
+  methods: {
+    initNotification() {
+      const messaging = firebase.messaging()
+      messaging.onMessage(payload => {
+        const { title, body } = payload.notification
+        this.$notify({
+          title,
+          text: body,
+          type: 'success',
+          duration: 15000,
+        })
+      })
+    },
+  },
+  mounted() {
+    this.initNotification()
   },
 }
 </script>

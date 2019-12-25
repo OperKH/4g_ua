@@ -55,8 +55,10 @@ module.exports = {
   css: ['vue-good-table/dist/vue-good-table.css', '@/assets/styles/index.css'],
   plugins: [
     { src: '~/plugins/vuex-persistedstate.js', ssr: false },
+    { src: '~/plugins/vue-notification', ssr: false },
     { src: '~/plugins/vue-good-table' },
     { src: '~/plugins/vue-slide-up-down' },
+    { src: '~/plugins/firebase', ssr: false },
     { src: '~/plugins/filters' },
   ],
   modules: [
@@ -67,4 +69,7 @@ module.exports = {
       },
     ],
   ],
+  manifest: {
+    gcm_sender_id: '114920397145',
+  },
 }
