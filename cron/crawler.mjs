@@ -5,6 +5,7 @@ import path from 'path'
 import { promisify } from 'util'
 import { promises as fs } from 'fs'
 
+import sendPushNotification from './sendPushNotification.mjs' // eslint-disable-line import/extensions
 import {
   getOperatorByFreq,
   getTechnologyKey,
@@ -12,8 +13,8 @@ import {
   getEquipmentBrandByModelName,
   provinceCorrector,
   cityCorrector,
-  // eslint-disable-next-line import/extensions
-} from './helpers.mjs'
+  getNotification,
+} from './helpers.mjs' // eslint-disable-line import/extensions
 
 const execAsync = promisify(exec)
 
@@ -246,6 +247,7 @@ const getOldStatistic = async () => {
 }
 
 const addDiff = async newStatistic => {
+  const addedDiff = {}
   const diffQtyKey = 'diffQty'
   try {
     console.log(getProgress(), 'Reading old Statistic...')
@@ -260,7 +262,9 @@ const addDiff = async newStatistic => {
         const oldOperator = oldOperators[operatorKey]
         const diffTotal = newOperator.total - oldOperator.total
         newOperator.diffTotal = diffTotal || oldOperator.diffTotal
-        newOperator.diffDate = diffTotal ? oldStatistic[key].updateDate : oldOperator.diffDate || oldStatistic[key].updateDate
+        newOperator.diffDate = diffTotal
+          ? oldStatistic[key].updateDate
+          : oldOperator.diffDate || oldStatistic[key].updateDate
         newOperator.values.forEach(newValue => {
           const isCity = 'city' in newValue
           const oldValue = oldOperator.values.find(value =>
@@ -281,8 +285,17 @@ const addDiff = async newStatistic => {
               // eslint-disable-next-line no-param-reassign
               newValue[diffQtyKey] = {}
             }
+            const diff = newQty - oldQty
             // eslint-disable-next-line no-param-reassign
-            newValue[diffQtyKey][qtyKey] = newQty - oldQty
+            newValue[diffQtyKey][qtyKey] = diff
+            if (key.includes('provinces')) {
+              const technology = key.slice(0, 2)
+              if (!(technology in addedDiff)) {
+                // eslint-disable-next-line no-param-reassign
+                addedDiff[technology] = {}
+              }
+              addedDiff[technology][operatorKey] = diff
+            }
           })
         })
       })
@@ -290,6 +303,7 @@ const addDiff = async newStatistic => {
   } catch (e) {
     console.log(e)
   }
+  return addedDiff
 }
 
 const saveJson = async (jsonFileName, data) => {
@@ -331,16 +345,40 @@ const publishPages = async () => {
   await fs.rename('dist', 'public')
 }
 
+const sendPush = addedDiff => {
+  if (Object.keys(addedDiff).length === 0) return null
+  console.log(getProgress(), 'Sending push...')
+
+  const message = {
+    notification: getNotification(addedDiff),
+    webpush: {
+      fcm_options: {
+        link: 'https://4g.operkh.com',
+      },
+    },
+    condition: "!('any' in topics)",
+  }
+
+  return sendPushNotification(message)
+    .then(response => {
+      console.log('Successfully sent message:', response)
+    })
+    .catch(error => {
+      console.log('Error sending message:', error)
+    })
+}
+
 export default async () => {
   try {
     await createFolders()
     const statistic = await processUCRFStatistic()
     if (!statistic) return
     await movePrevApiFiles()
-    await addDiff(statistic)
+    const addedDiff = await addDiff(statistic)
     await saveJsonFiles(statistic)
     await generatePages()
     await publishPages()
+    await sendPush(addedDiff)
   } catch (e) {
     console.log(e)
   }

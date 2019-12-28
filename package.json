@@ -19,6 +19,7 @@
     "@nuxtjs/google-analytics": "^2.2.2",
     "axios": "^0.19.0",
     "firebase": "^7.6.1",
+    "firebase-admin": "^8.9.0",
     "jquery": "^3.4.1",
     "jsdom": "^15.2.1",
     "node-cron": "^2.0.3",

@@ -62,6 +62,39 @@ export const getEquipmentBrandByModelName = modelName => {
   return modelName
 }
 
+const operatorsDic = {
+  ks: 'Київстар',
+  mts: 'Vodafone',
+  life: 'lifecell',
+  triMob: '3Mob',
+}
+const addSign = n => {
+  if (n > 0) return `+${n}`
+  return String(n)
+}
+const formatNotificationDigit = n => addSign(n).padStart(4)
+const formatOperatorKey = operatorKey => `${operatorsDic[operatorKey] || ''}:`.padEnd(9)
+
+export const getNotification = diff => {
+  const title = 'Нові Базові Станції'
+  const body = Object.entries(diff)
+    .sort(([technologyA], [technologyB]) => technologyB.localeCompare(technologyA))
+    .reduce((acc, [technology, operators]) => {
+      const tech = `${acc}${technology.toUpperCase()}  `
+      const q = Object.entries(operators)
+        .sort(([operatorKeyA], [operatorKeyB]) => {
+          if (operatorKeyA === 'triMob') return 1
+          if (operatorKeyB === 'triMob') return -1
+          return operatorKeyA.localeCompare(operatorKeyB)
+        })
+        .reduce((opAcc, [operatorKey, qty]) => {
+          return `${opAcc} ${formatOperatorKey(operatorKey)} ${formatNotificationDigit(qty)};`
+        }, '')
+      return `${tech}${q}\n`
+    }, '')
+  return { title, body }
+}
+
 const provincesList = [
   'АР Крим',
   'Вінницька',
