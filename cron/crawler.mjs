@@ -265,6 +265,14 @@ const addDiff = async newStatistic => {
         newOperator.diffDate = diffTotal
           ? oldStatistic[key].updateDate
           : oldOperator.diffDate || oldStatistic[key].updateDate
+        if (key.includes('provinces') && diffTotal) {
+          const technology = key.slice(0, 2)
+          if (!(technology in addedDiff)) {
+            // eslint-disable-next-line no-param-reassign
+            addedDiff[technology] = {}
+          }
+          addedDiff[technology][operatorKey] = diffTotal
+        }
         newOperator.values.forEach(newValue => {
           const isCity = 'city' in newValue
           const oldValue = oldOperator.values.find(value =>
@@ -288,14 +296,6 @@ const addDiff = async newStatistic => {
             const diff = newQty - oldQty
             // eslint-disable-next-line no-param-reassign
             newValue[diffQtyKey][qtyKey] = diff
-            if (key.includes('provinces')) {
-              const technology = key.slice(0, 2)
-              if (!(technology in addedDiff)) {
-                // eslint-disable-next-line no-param-reassign
-                addedDiff[technology] = {}
-              }
-              addedDiff[technology][operatorKey] = diff
-            }
           })
         })
       })
