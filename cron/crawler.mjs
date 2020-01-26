@@ -349,12 +349,15 @@ const sendPush = addedDiff => {
   if (Object.keys(addedDiff).length === 0) return null
   console.log(getProgress(), 'Sending push...')
 
+  const icon = 'https://4g.operkh.com/img/icons/4g-192x192.png'
+  const link = 'https://4g.operkh.com'
+  const { title, body } = getNotification(addedDiff)
+
   const message = {
-    notification: getNotification(addedDiff),
+    notification: { title, body },
     webpush: {
-      fcm_options: {
-        link: 'https://4g.operkh.com',
-      },
+      notification: { title, body, icon },
+      fcm_options: { link },
     },
     condition: "!('any' in topics)",
   }
