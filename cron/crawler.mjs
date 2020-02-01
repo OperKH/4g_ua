@@ -348,6 +348,7 @@ const publishPages = async () => {
 const sendPush = addedDiff => {
   if (Object.keys(addedDiff).length === 0) return null
   console.log(getProgress(), 'Sending push...')
+  console.log(addedDiff)
 
   const icon = 'https://4g.operkh.com/img/icons/4g-192x192.png'
   const link = 'https://4g.operkh.com'
