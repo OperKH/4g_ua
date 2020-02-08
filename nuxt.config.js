@@ -72,4 +72,7 @@ module.exports = {
   manifest: {
     gcm_sender_id: '114920397145',
   },
+  generate: {
+    workerConcurrency: 1,
+  },
 }
