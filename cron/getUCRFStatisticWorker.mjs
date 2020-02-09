@@ -55,7 +55,7 @@ const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}) => {
     return page === lastPage ? Object.values(result) : getUCRFStatistic(technology, page + 1, result)
   } catch (e) {
     console.log(`UCRF ${technology} Statistic Request Error.`)
-    return Object.values(prevStatistic)
+    return null
   }
 }
 

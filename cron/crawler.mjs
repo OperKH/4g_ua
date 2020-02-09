@@ -43,6 +43,7 @@ const getMergedUCRFStatistic = async () => {
     getUCRFStatistic('LTE-1800'),
     getUCRFStatistic('LTE-2600'),
   ])
+  if (statistic.includes(null)) return null
   return statistic.flat()
 }
 const processUCRFStatistic = async () => {
