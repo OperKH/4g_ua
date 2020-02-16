@@ -1,5 +1,9 @@
+import fs from 'fs'
+import path from 'path'
 import admin from 'firebase-admin'
-import serviceAccount from '../serviceAccountKey.json'
+
+const serviceAccountPath = path.join('', 'serviceAccountKey.json')
+const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath))
 
 export default function sendPushNotification(message) {
   const app = admin.initializeApp({
