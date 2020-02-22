@@ -20,7 +20,7 @@ const ucrfAPI = axios.create({
   httpsAgent: new https.Agent({ rejectUnauthorized: false }),
 })
 
-const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}) => {
+const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}, errorCount = 0) => {
   try {
     const res = await ucrfAPI.post('', null, {
       params: {
@@ -54,6 +54,10 @@ const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}) => {
     console.log(`     ${technology} page: ${page}/${lastPage}`)
     return page === lastPage ? Object.values(result) : getUCRFStatistic(technology, page + 1, result)
   } catch (e) {
+    if (errorCount < 10) {
+      console.log(`     ${technology} page: ${page} - Retry (${errorCount + 1})`)
+      return getUCRFStatistic(technology, page, prevStatistic, errorCount + 1)
+    }
     console.log(`UCRF ${technology} Statistic Request Error.`)
     return null
   }
