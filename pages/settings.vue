@@ -1,7 +1,7 @@
 <template>
   <section>
     <h2>Сповіщення про нові базові станції</h2>
-    <button type="button" @click="subscribeToNotifications">Підписатися</button>
+    <button class="btn btn-primary" type="button" @click="subscribeToNotifications" v-promise-btn>Підписатися</button>
   </section>
 </template>
 
@@ -13,7 +13,8 @@ export default {
   methods: {
     subscribeToNotifications() {
       const messaging = firebase.messaging()
-      messaging.requestPermission()
+      return messaging
+        .requestPermission()
         .then(() => messaging.getToken())
         .then(token => {
           this.$notify({
@@ -37,3 +38,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  h2 {
+    margin-bottom: 10px;
+  }
+</style>

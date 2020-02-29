@@ -1,6 +1,7 @@
 @import './general/root.css';
 @import './general/common.css';
 @import './general/global.css';
+@import './general/buttons.css';
 
 @import './vue-good-table.css';
 @import './vue-notification.css';
