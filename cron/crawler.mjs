@@ -337,12 +337,24 @@ const generatePages = () => {
 }
 
 const publishPages = async () => {
+  const backupFolderName = 'public-backup'
+
+  console.log(getProgress(), `Creating ${backupFolderName} folder...`)
+  try {
+    await fs.mkdir(backupFolderName)
+  } catch (e) {
+    console.log(` ${backupFolderName} folder exists. OK.`)
+  }
+
   console.log(getProgress(), 'Publish pages folder...')
   try {
-    await fs.rename('public', `public-backup-${Date.now()}`)
+    const backupPublicFolderName = `public_${new Date().toISOString().replace(/:/g, '-')}`
+    const backupPath = path.join(backupFolderName, backupPublicFolderName)
+    await fs.rename('public', backupPath)
   } catch (e) {
     console.log(e)
   }
+
   await fs.rename('dist', 'public')
 }
 
