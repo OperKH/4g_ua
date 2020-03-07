@@ -11,8 +11,6 @@ import {
   getTechnologyKey,
   getFreqKey,
   getEquipmentBrandByModelName,
-  provinceCorrector,
-  cityCorrector,
   getNotification,
 } from './helpers.mjs' // eslint-disable-line import/extensions
 
@@ -62,8 +60,8 @@ const processUCRFStatistic = async () => {
   data.forEach(item => {
     const date = new Date(item[1])
     const dateEnd = new Date(item[2])
-    const province = provinceCorrector(item[3])
-    const city = cityCorrector(item[4], item[3])
+    const province = item[3]
+    const city = item[4]
     const equipmentModelName = item[5]
     const freq = item[7]
     const technology = item[9]
