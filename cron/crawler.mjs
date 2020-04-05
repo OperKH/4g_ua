@@ -320,6 +320,8 @@ const saveJson = async (jsonFileName, data) => {
   }
 }
 
+const checkHasChanges = addedDiff => Object.keys(addedDiff).length > 0
+
 const saveJsonFiles = async statistic => {
   try {
     console.log(getProgress(), 'Saving JSONs...')
@@ -357,7 +359,6 @@ const publishPages = async () => {
 }
 
 const sendPush = addedDiff => {
-  if (Object.keys(addedDiff).length === 0) return null
   console.log(getProgress(), 'Sending push...')
   console.log(addedDiff)
 
@@ -390,10 +391,16 @@ export default async () => {
     if (!statistic) return
     await movePrevApiFiles()
     const addedDiff = await addDiff(statistic)
-    await saveJsonFiles(statistic)
-    await generatePages()
-    await publishPages()
-    await sendPush(addedDiff)
+    const hasChanges = checkHasChanges(addedDiff)
+    if (hasChanges) {
+      console.log(addedDiff)
+      await saveJsonFiles(statistic)
+      await generatePages()
+      await publishPages()
+      await sendPush(addedDiff)
+    } else {
+      console.log(' No diff. Exit.')
+    }
   } catch (e) {
     console.log(e)
   }
