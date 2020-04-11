@@ -262,7 +262,7 @@ const addDiff = async newStatistic => {
         const diffTotal = newOperator.total - oldOperator.total
         newOperator.diffTotal = diffTotal || oldOperator.diffTotal
         newOperator.diffDate = diffTotal
-          ? oldStatistic[key].updateDate
+          ? newStatistic[key].updateDate
           : oldOperator.diffDate || oldStatistic[key].updateDate
         if (key.includes('provinces') && diffTotal) {
           const technology = key.slice(0, 2)
