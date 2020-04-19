@@ -65,9 +65,11 @@ export default {
 .nav-list {
   display: flex;
   font-size: 1.5rem;
+  line-height: 2rem;
+  margin: 0 -0.75rem;
 }
-.nav-list li + li {
-  margin-left: 15px;
+.nav-list li {
+  padding: 0 0.75rem;
 }
 .nav-link {
   display: inline-block;
@@ -82,5 +84,31 @@ export default {
   font-weight: bold;
   color: var(--success);
   cursor: auto;
+}
+
+@media (max-width: 767px) {
+  .nav-list {
+    margin: 0 -0.25rem;
+  }
+  .nav-list li {
+    flex-basis: 25%;
+    max-width: 25%;
+    text-align: center;
+    padding: 0 0.25rem;
+  }
+}
+
+@media (max-width: 424px) {
+  .nav-list {
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+  }
+}
+
+@media (max-width: 374px) {
+  .nav-list {
+    font-size: 1.1rem;
+    line-height: 1.3rem;
+  }
 }
 </style>

@@ -16,6 +16,8 @@
   margin-bottom: 1rem;
   flex-basis: 50%;
   max-width: 50%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* iOS momentum-based scrolling */
 }
 .operator-header {
   position: relative;
@@ -33,7 +35,7 @@
   width: 10px;
   height: 10px;
   margin-top: -5px;
-  opacity: .8;
+  opacity: 0.8;
   border-right: 3px solid #ebebeb;
   border-bottom: 3px solid #ebebeb;
   transition: transform 500ms ease-in-out;
@@ -63,19 +65,32 @@
   font-size: 0.75rem;
 }
 
-@media (max-width: 1023px) {
-  .table-holder {
-    flex-basis: 100%;
-    max-width: none;
-    padding-right: 0;
-    padding-left: 0;
-  }
-}
-
 .text-success {
   color: var(--success);
 }
 
 .text-danger {
   color: var(--danger);
+}
+
+@media (max-width: 1023px) {
+  .table-holder {
+    flex-basis: 100%;
+    max-width: none;
+    width: 100%;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}
+
+@media (max-width: 424px) {
+  .table-holder {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 374px) {
+  .table-holder {
+    font-size: 0.8rem;
+  }
 }
