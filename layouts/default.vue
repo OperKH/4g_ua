@@ -36,6 +36,10 @@ export default {
           name: '3G по містах',
           to: '/3g-cities',
         },
+        {
+          name: 'Налаштування',
+          to: '/settings',
+        },
       ],
     }
   },
@@ -71,6 +75,9 @@ export default {
 .nav-list li {
   padding: 0 0.75rem;
 }
+.nav-list li:nth-child(5) {
+  margin-left: auto;
+}
 .nav-link {
   display: inline-block;
   padding-top: 10px;
@@ -88,6 +95,7 @@ export default {
 
 @media (max-width: 767px) {
   .nav-list {
+    flex-wrap: wrap;
     margin: 0 -0.25rem;
   }
   .nav-list li {
@@ -95,6 +103,16 @@ export default {
     max-width: 25%;
     text-align: center;
     padding: 0 0.25rem;
+  }
+  .nav-list li:nth-child(5) {
+    flex-basis: 50%;
+    max-width: 50%;
+    margin-left: 50%;
+    order: -1;
+  }
+  .nav-list li:nth-child(5) .nav-link {
+    padding-bottom: 10px;
+    width: 100%;
   }
 }
 
