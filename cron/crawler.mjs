@@ -2,7 +2,6 @@
 import { Worker } from 'worker_threads'
 import { exec } from 'child_process'
 import path from 'path'
-import { promisify } from 'util'
 import { promises as fs } from 'fs'
 
 import sendPushNotification from './sendPushNotification.mjs' // eslint-disable-line import/extensions
@@ -13,8 +12,6 @@ import {
   getEquipmentBrandByModelName,
   getNotification,
 } from './helpers.mjs' // eslint-disable-line import/extensions
-
-const execAsync = promisify(exec)
 
 let prevStartDate = new Date()
 const getProgress = () => {
@@ -333,7 +330,13 @@ const saveJsonFiles = async statistic => {
 
 const generatePages = () => {
   console.log(getProgress(), 'Generating pages...')
-  return execAsync('npm run generate')
+
+  return new Promise((resolve, reject) => {
+    const generateProcess = exec('npm run generate')
+    generateProcess.on('close', resolve)
+    generateProcess.on('error', reject)
+    generateProcess.stdout.pipe(process.stdout)
+  })
 }
 
 const publishPages = async () => {
