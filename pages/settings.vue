@@ -12,6 +12,7 @@ export default {
   name: 'Settings',
   methods: {
     subscribeToNotifications() {
+      this.$ga.event('SubscribeNotifications', 'click', 'Subscribe to Notifications Btn Click')
       const messaging = firebase.messaging()
       return messaging
         .requestPermission()
@@ -40,7 +41,7 @@ export default {
 </script>
 
 <style scoped>
-  h2 {
-    margin-bottom: 10px;
-  }
+h2 {
+  margin-bottom: 10px;
+}
 </style>
