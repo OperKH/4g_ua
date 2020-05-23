@@ -224,11 +224,11 @@ const movePrevApiFiles = async () => {
 }
 
 const getOldStatistic = async () => {
-  const files = await fs.readdir(oldApiFolderPath, 'utf-8')
+  const files = await fs.readdir(apiFolderPath, 'utf-8')
   const jsons = files.filter(fileName => /\.json$/.test(fileName))
   const statistics = await Promise.all(
     jsons.map(async fileName => {
-      const filePath = path.resolve(oldApiFolderPath, fileName)
+      const filePath = path.resolve(apiFolderPath, fileName)
       const json = await fs.readFile(filePath, 'utf-8')
       return JSON.parse(json)
     }),
@@ -392,11 +392,11 @@ export default async () => {
     await createFolders()
     const statistic = await processUCRFStatistic()
     if (!statistic) return
-    await movePrevApiFiles()
     const addedDiff = await addDiff(statistic)
     const hasChanges = checkHasChanges(addedDiff)
     if (hasChanges) {
       console.log(addedDiff)
+      await movePrevApiFiles()
       await saveJsonFiles(statistic)
       await generatePages()
       await publishPages()
