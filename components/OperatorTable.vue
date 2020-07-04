@@ -16,6 +16,7 @@
       :columns="columns"
       :rows="operatorData.values"
       :sort-options="sortOptions"
+      :pagination-options="paginationOptions"
       styleClass="vgt-table striped bordered"
       @on-column-filter="onColumnFilter"
       ref="table"
@@ -132,8 +133,11 @@ export default {
     isActive() {
       return this.isTableOpen[this.operatorKey]
     },
+    isCity() {
+      return this.type === 'city'
+    },
     columns() {
-      return this.type === 'city' ? this.columnsAll : this.columnsAll.slice(1)
+      return this.isCity ? this.columnsAll : this.columnsAll.slice(1)
     },
     sortOptions() {
       return {
@@ -141,6 +145,20 @@ export default {
         initialSortBy: { field: this.type, type: 'asc' },
       }
     },
+    paginationOptions() {
+      return {
+        enabled: this.isCity,
+        mode: 'pages',
+        perPage: 10,
+        perPageDropdown: [10, 25, 50, 100, 200],
+        nextLabel: 'далі',
+        prevLabel: 'назад',
+        rowsPerPageLabel: 'Рядків на сторінці',
+        ofLabel: 'з',
+        pageLabel: 'сторінка',
+        allLabel: 'Усі',
+      }
+    }
   },
   methods: {
     ...mapActions(['toggleTableOpen', 'columnFiltersChange']),
