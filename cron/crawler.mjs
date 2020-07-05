@@ -33,11 +33,8 @@ const getUCRFStatistic = workerData =>
 
 const getMergedUCRFStatistic = async () => {
   console.log(getProgress(), 'Requesting UCRF Statistic...')
-  const statistic = await Promise.all([
-    getUCRFStatistic('UMTS'),
-    getUCRFStatistic('LTE-1800'),
-    getUCRFStatistic('LTE-2600'),
-  ])
+  const technologies = ['UMTS', 'LTE-900', 'LTE-1800', 'LTE-2600']
+  const statistic = await Promise.all(technologies.map(technology => getUCRFStatistic(technology)))
   if (statistic.includes(null)) return null
   return statistic.flat()
 }
@@ -94,8 +91,8 @@ const processUCRFStatistic = async () => {
         date,
       }
       if (technologyKey === '4g') {
-        provinceOperators[operatorNameKey].values[province].qty = { all: 0, 1800: 0, 2600: 0 }
-        provinceOperators[operatorNameKey].values[province].brands = { all: {}, 1800: {}, 2600: {} }
+        provinceOperators[operatorNameKey].values[province].qty = { all: 0, 900: 0, 1800: 0, 2600: 0 }
+        provinceOperators[operatorNameKey].values[province].brands = { all: {}, 900: {}, 1800: {}, 2600: {} }
       } else {
         provinceOperators[operatorNameKey].values[province].qty = { all: 0 }
         provinceOperators[operatorNameKey].values[province].brands = { all: {} }
@@ -124,8 +121,8 @@ const processUCRFStatistic = async () => {
         brands: {},
       }
       if (technologyKey === '4g') {
-        cityOperators[operatorNameKey].values[cityKey].qty = { all: 0, 1800: 0, 2600: 0 }
-        cityOperators[operatorNameKey].values[cityKey].brands = { all: {}, 1800: {}, 2600: {} }
+        cityOperators[operatorNameKey].values[cityKey].qty = { all: 0, 900: 0, 1800: 0, 2600: 0 }
+        cityOperators[operatorNameKey].values[cityKey].brands = { all: {}, 900: {}, 1800: {}, 2600: {} }
       } else {
         cityOperators[operatorNameKey].values[cityKey].qty = { all: 0 }
         cityOperators[operatorNameKey].values[cityKey].brands = { all: {} }

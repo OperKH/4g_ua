@@ -1,11 +1,11 @@
 export const getOperatorByFreq = freq => {
-  if (/-1750|1967|1972|1977|-\s?2535/i.test(freq)) {
+  if (/-895|-1750|1967|1972|1977|-\s?2535/i.test(freq)) {
     return 'ks'
   }
-  if (/-1770|1952|1957|1962|-2520/i.test(freq)) {
+  if (/-905|-1770|1952|1957|1962|-2520/i.test(freq)) {
     return 'mts'
   }
-  if (/-1725|1922|1927|1932|-2545/i.test(freq)) {
+  if (/-900|-1725|1922|1927|1932|-2545/i.test(freq)) {
     return 'life'
   }
   if (/1937|1942|1947/i.test(freq)) {
@@ -15,6 +15,9 @@ export const getOperatorByFreq = freq => {
 }
 
 export const getFreqKey = freq => {
+  if (/-895|-900|-905/i.test(freq)) {
+    return 900
+  }
   if (/-1725|-1770|-1750/i.test(freq)) {
     return 1800
   }
@@ -31,6 +34,7 @@ export const getTechnologyKey = technology => {
   switch (technology) {
     case 'UMTS':
       return '3g'
+    case 'LTE-900':
     case 'LTE-1800':
     case 'LTE-2600':
       return '4g'
