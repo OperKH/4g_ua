@@ -37,9 +37,9 @@ const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}, errorC
       .last()
       .prev()
       .text()
-    const lastPage = parseInt(lastPageText, 10)
+    const lastPage = parseInt(lastPageText, 10) || 1
 
-    if (!lastPage || lastPage < page) {
+    if (lastPage < page) {
       return Object.values(prevStatistic)
     }
 
