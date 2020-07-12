@@ -25,6 +25,10 @@
         <template v-if="column.field === 'brands'">
           <template v-if="2600 in row.brands">
             <div>
+              <b>900</b><template v-if="row.brands[900].indexOf(',') !== -1">({{row.qty[900]}})</template>: {{row.brands[900] || '&ndash;'}}
+              <DiffQty :diffDate="operatorData.diffDate" :diffQty="row.diffQty" freq="900" v-if="row.diffQty"/>
+            </div>
+            <div>
               <b>1800</b><template v-if="row.brands[1800].indexOf(',') !== -1">({{row.qty[1800]}})</template>: {{row.brands[1800] || '&ndash;'}}
               <DiffQty :diffDate="operatorData.diffDate" :diffQty="row.diffQty" freq="1800" v-if="row.diffQty"/>
             </div>
