@@ -281,7 +281,7 @@ const addDiff = async newStatistic => {
               : value.province === newValue.province,
           )
           // Check if operator has no changes then copy old changes
-          if (diffTotal === 0) {
+          if (diffTotal === 0 && oldValue) {
             // eslint-disable-next-line no-param-reassign
             newValue[diffQtyKey] = oldValue[diffQtyKey]
             return
