@@ -51,11 +51,11 @@ const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}, errorC
     ).map(tr => Array.from($(tr).find('td')).map(td => td.innerHTML))
 
     const result = { ...prevStatistic, ...statistic.reduce((acc, s) => ({ ...acc, [s[0]]: s }), {}) }
-    console.log(`     ${technology} page: ${page}/${lastPage}`)
+    console.log(`   ${technology.padEnd(8)} page: ${page.toString().padStart(3, 0)}/${lastPage.toString().padStart(3, 0)}`)
     return page === lastPage ? Object.values(result) : getUCRFStatistic(technology, page + 1, result)
   } catch (e) {
     if (errorCount < 10) {
-      console.log(`     ${technology} page: ${page} - Retry (${errorCount + 1})`)
+      console.log(`     ${technology.padEnd(8)} page: ${page} - Retry (${errorCount + 1})`)
       return getUCRFStatistic(technology, page, prevStatistic, errorCount + 1)
     }
     console.log(`UCRF ${technology} Statistic Request Error.`)
