@@ -124,6 +124,7 @@ export default {
           label: 'Останнє додавання',
           field: 'date',
           formatFn: formatDateFn,
+          sortFn: (a, b) => new Date(a) - new Date(b),
           filterOptions: {
             enabled: true,
             placeholder: 'Пошук...',
