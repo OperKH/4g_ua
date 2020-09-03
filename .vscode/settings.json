@@ -1,0 +1,6 @@
+{
+  "editor.formatOnSave": false,
+  "editor.renderWhitespace": "all",
+  "editor.renderControlCharacters": true,
+  "editor.renderIndentGuides": true
+}
