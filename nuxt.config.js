@@ -28,6 +28,9 @@ module.exports = {
    ** Build configuration
    */
   build: {
+    parallel: false,
+    cache: true,
+    hardSource: true,
     /*
      ** Run ESLint on save
      */
@@ -75,6 +78,6 @@ module.exports = {
     gcm_sender_id: '114920397145',
   },
   generate: {
-    workerConcurrency: 1,
+    crawler: false,
   },
 }
