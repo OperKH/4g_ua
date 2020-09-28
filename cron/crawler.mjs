@@ -13,6 +13,8 @@ import {
   getNotification,
 } from './helpers.mjs' // eslint-disable-line import/extensions
 
+const isForceUpdate = process.argv[2] === '--force'
+
 let prevStartDate = new Date()
 const getProgress = () => {
   const currentDate = new Date()
@@ -398,13 +400,15 @@ export default async () => {
     if (!statistic) return
     const addedDiff = await addDiff(statistic)
     const hasChanges = checkHasChanges(addedDiff)
-    if (hasChanges) {
+    if (hasChanges || isForceUpdate) {
       console.log(addedDiff)
       await movePrevApiFiles()
       await saveJsonFiles(statistic)
       await generatePages()
       await publishPages()
-      await sendPush(addedDiff)
+      if (hasChanges) {
+        await sendPush(addedDiff)
+      }
     } else {
       console.log(' No diff. Exit.')
     }

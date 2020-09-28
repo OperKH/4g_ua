@@ -12,3 +12,8 @@ Init start-up service
 pm2 start ecosystem.config.js
 pm2 save
 ```
+
+## Force update API and regenerate pages
+```bash
+npm run crawler -- --force
+```
