@@ -251,12 +251,16 @@ const getOldStatistic = async () => {
 const addDiff = async newStatistic => {
   const addedDiff = {}
   const diffQtyKey = 'diffQty'
+  let isSomeOldEmpty = false
   try {
     console.log(getProgress(), 'Reading old Statistic...')
     const oldStatistic = await getOldStatistic()
     console.log(getProgress(), 'Calculating diff...')
     Object.keys(newStatistic).forEach(key => {
-      if (!oldStatistic[key] || !oldStatistic[key].operators) return
+      if (!oldStatistic[key] || !oldStatistic[key].operators) {
+        isSomeOldEmpty = true
+        return
+      }
       const newOperators = newStatistic[key].operators
       const oldOperators = oldStatistic[key].operators
       Object.keys(newOperators).forEach(operatorKey => {
@@ -305,7 +309,7 @@ const addDiff = async newStatistic => {
   } catch (e) {
     console.log(e)
   }
-  return addedDiff
+  return [addedDiff, isSomeOldEmpty]
 }
 
 const saveJson = async (jsonFileName, data) => {
@@ -398,9 +402,9 @@ export default async () => {
     await createFolders()
     const statistic = await processUCRFStatistic()
     if (!statistic) return
-    const addedDiff = await addDiff(statistic)
+    const [addedDiff, isSomeOldEmpty] = await addDiff(statistic)
     const hasChanges = checkHasChanges(addedDiff)
-    if (hasChanges || isForceUpdate) {
+    if (hasChanges || isSomeOldEmpty || isForceUpdate) {
       console.log(addedDiff)
       await movePrevApiFiles()
       await saveJsonFiles(statistic)
