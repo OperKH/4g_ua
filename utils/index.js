@@ -51,10 +51,10 @@ export const readFileAsync = (...args) => {
 
 export const requestJsonAsync = async file => {
   if (process.server) {
-    const data = await readFileAsync(`static/api/${file}`, 'utf8')
+    const data = await readFileAsync(`static/api/v1/${file}`, 'utf8')
     return JSON.parse(data)
   } else {
-    const { data } = await axios.get(`/api/${file}`)
+    const { data } = await axios.get(`/api/v1/${file}`)
     return data
   }
 }

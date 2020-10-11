@@ -198,12 +198,14 @@ const processUCRFStatistic = async () => {
   return mainData
 }
 
-const apiFolderPath = path.resolve('static', 'api')
+const apiRootFolderPath = path.resolve('static', 'api')
+const apiFolderPath = path.resolve(apiRootFolderPath, 'v1')
 const oldApiFolderPath = path.resolve(apiFolderPath, 'old')
 
 const createFolders = async () => {
   try {
     console.log('\n\n Creating api folder...')
+    await fs.mkdir(apiRootFolderPath)
     await fs.mkdir(apiFolderPath)
   } catch (e) {
     console.log(' api folder exists. OK.')
