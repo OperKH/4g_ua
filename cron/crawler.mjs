@@ -387,7 +387,7 @@ const sendPush = addedDiff => {
       notification: { title, body, icon },
       fcm_options: { link },
     },
-    condition: "!('any' in topics)",
+    topic: 'bs',
   }
 
   return sendPushNotification(message)

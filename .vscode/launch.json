@@ -7,6 +7,13 @@
       "name": "Crawler",
       "program": "${workspaceFolder}/cron/crawlerRunner.mjs",
       "runtimeArgs": ["--experimental-modules"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server",
+      "program": "${workspaceFolder}/server/index.mjs",
+      "runtimeArgs": ["--experimental-modules"]
     }
   ]
 }

@@ -12,6 +12,7 @@
     "generate": "nuxt generate",
     "crawler": "node --experimental-modules cron/crawlerRunner.mjs",
     "cron": "node --experimental-modules cron/index.mjs",
+    "server": "node --experimental-modules server/index.mjs",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint"
   },
@@ -22,6 +23,9 @@
     "firebase-admin": "^9.2.0",
     "jquery": "^3.5.1",
     "jsdom": "^16.4.0",
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-route": "^3.2.0",
     "node-cron": "^2.0.3",
     "nuxt": "^2.14.6",
     "vue-good-table": "^2.21.0",
