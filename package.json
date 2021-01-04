@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@nuxtjs/google-analytics": "^2.4.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "firebase": "^7.21.1",
     "firebase-admin": "^9.2.0",
     "jquery": "^3.5.1",
