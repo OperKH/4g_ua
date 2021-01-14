@@ -56,6 +56,11 @@
           {{ formattedRow[column.field] }}
         </template>
       </template>
+      <template #emptystate>
+        <div class="vgt-center-align vgt-text-disabled">
+          Немає даних для відображення
+        </div>
+      </template>
     </vue-good-table>
   </slide-up-down>
 </section>
