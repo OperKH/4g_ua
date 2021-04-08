@@ -91,9 +91,10 @@ export const getNotification = diff => {
           if (operatorKeyB === 'triMob') return -1
           return operatorKeyA.localeCompare(operatorKeyB)
         })
-        .reduce((opAcc, [operatorKey, qty]) => {
-          return `${opAcc} ${formatOperatorKey(operatorKey)} ${formatNotificationDigit(qty)};`
-        }, '')
+        .reduce(
+          (opAcc, [operatorKey, qty]) => `${opAcc} ${formatOperatorKey(operatorKey)} ${formatNotificationDigit(qty)};`,
+          '',
+        )
       return `${tech}${q}\n`
     }, '')
   return { title, body }
