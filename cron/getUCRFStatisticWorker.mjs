@@ -55,6 +55,7 @@ const getUCRFStatistic = async (technology, page = 1, prevStatistic = {}, errorC
     return page === lastPage ? Object.values(result) : getUCRFStatistic(technology, page + 1, result)
   } catch (e) {
     if (errorCount < 10) {
+      await new Promise(r => setTimeout(r, Math.sqrt(errorCount) * errorCount * 1000)) // 1-27 sec delay
       console.log(`     ${technology.padEnd(8)} page: ${page} - Retry (${errorCount + 1})`)
       return getUCRFStatistic(technology, page, prevStatistic, errorCount + 1)
     }
