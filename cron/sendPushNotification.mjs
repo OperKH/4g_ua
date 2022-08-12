@@ -1,17 +1,19 @@
+/* eslint-disable import/extensions */
+/* eslint-disable import/no-unresolved */
 import fs from 'fs'
 import path from 'path'
-import admin from 'firebase-admin'
+import { initializeApp, deleteApp, cert } from 'firebase-admin/app'
+import { getMessaging } from 'firebase-admin/messaging'
 
 const serviceAccountPath = path.join('', 'serviceAccountKey.json')
 const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath))
 
 export default function sendPushNotification(message) {
-  const app = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+  const app = initializeApp({
+    credential: cert(serviceAccount),
   })
 
-  return admin
-    .messaging()
+  return getMessaging()
     .send(message)
-    .then(response => app.delete().then(() => response))
+    .then(response => deleteApp(app).then(() => response))
 }
