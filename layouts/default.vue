@@ -13,7 +13,8 @@
 </template>
 
 <script>
-import firebase from '@/plugins/firebase'
+import { getMessaging, onMessage } from 'firebase/messaging'
+import firebaseApp from '@/plugins/firebase'
 
 export default {
   name: 'Index',
@@ -45,8 +46,8 @@ export default {
   },
   methods: {
     initNotification() {
-      const messaging = firebase.messaging()
-      messaging.onMessage(payload => {
+      const messaging = getMessaging(firebaseApp)
+      onMessage(messaging, payload => {
         const { title, body } = payload.notification
         this.$notify({
           title,

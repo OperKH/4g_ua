@@ -8,46 +8,42 @@
 
 <script>
 import axios from 'axios'
-import firebase from '@/plugins/firebase'
+import { getMessaging, getToken } from 'firebase/messaging'
+import firebaseApp from '@/plugins/firebase'
 
 export default {
   name: 'Settings',
   methods: {
-    subscribeToNotifications() {
+    async subscribeToNotifications() {
       this.$ga.event('SubscribeNotifications', 'click', 'Subscribe to Notifications Btn Click')
-      const messaging = firebase.messaging()
-      return messaging
-        .requestPermission()
-        .then(() => messaging.getToken())
-        .then(token => {
-          console.log(token)
-          return axios.post('/api/v2/subscription', { token, topic: 'bs' })
+      const messaging = getMessaging(firebaseApp)
+      const notificationPermission = await Notification.requestPermission()
+      try {
+        if (notificationPermission !== 'granted') throw new Error(notificationPermission)
+        const token = await getToken(messaging)
+        await axios.post('/api/v2/subscription', { token, topic: 'bs' })
+        this.$notify({
+          title: 'Сповіщення',
+          text: 'Ви успішно підписались на сповіщення про нові базові станції.',
+          type: 'success',
+          duration: 5000,
         })
-        .then(() => {
-          this.$notify({
-            title: 'Сповіщення',
-            text: 'Ви успішно підписались на сповіщення про нові базові станції.',
-            type: 'success',
-            duration: 5000,
-          })
+      } catch (e) {
+        this.$notify({
+          title: 'Сповіщення',
+          text: 'Щось пішло не так.',
+          type: 'error',
+          duration: 6000,
         })
-        .catch(e => {
-          this.$notify({
-            title: 'Сповіщення',
-            text: 'Щось пішло не так.',
-            type: 'error',
-            duration: 6000,
-          })
-          console.log(e)
-        })
+        console.log(e)
+      }
     },
     async unsubscribeToNotifications() {
       this.$ga.event('UnsubscribeNotifications', 'click', 'Unsubscribe to Notifications Btn Click')
-      const messaging = firebase.messaging()
+      const messaging = getMessaging(firebaseApp)
       try {
-        const token = await messaging.getToken()
+        const token = await getToken(messaging)
         if (token) {
-          console.log(token)
           await axios.delete('/api/v2/subscription', { params: { token, topic: 'bs' } })
           this.$notify({
             title: 'Сповіщення',
@@ -56,13 +52,13 @@ export default {
             duration: 7000,
           })
         } else {
-          console.log('No token')
           this.$notify({
             title: 'Сповіщення',
             text: 'Ви не підписані.',
-            type: 'цфктштл',
+            type: 'warning',
             duration: 5000,
           })
+          console.log('No token')
         }
       } catch (e) {
         this.$notify({
