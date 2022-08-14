@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 import route from 'koa-route'
 import subscriptionController from '../controllers/subscription.controller.mjs'
 
